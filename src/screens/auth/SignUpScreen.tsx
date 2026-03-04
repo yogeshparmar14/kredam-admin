@@ -3,61 +3,86 @@ import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   KeyboardAvoidingView, Platform, ScrollView, Alert, ActivityIndicator,
 } from 'react-native';
-import { useLoginMutation } from '../../store/api/authApi';
-import { setCredentials } from '../../store/slices/authSlice';
-import { useAppDispatch } from '../../store';
+import { useRegisterMutation } from '../../store/api/authApi';
 import { COLORS } from '../../constants';
 
-export function LoginScreen({ navigation }: { navigation: { navigate: (route: string) => void } }) {
-  const dispatch = useAppDispatch();
-  const [login, { isLoading }] = useLoginMutation();
+export function SignUpScreen({ navigation }: { navigation: { goBack: () => void } }) {
+  const [register, { isLoading }] = useRegisterMutation();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please enter email and password');
+  const handleRegister = async () => {
+    if (!name.trim() || !email.trim() || !phone.trim() || !password.trim()) {
+      Alert.alert('Error', 'All fields are required');
+      return;
+    }
+    if (!/^\d{10}$/.test(phone.trim())) {
+      Alert.alert('Error', 'Phone must be exactly 10 digits');
+      return;
+    }
+    if (password.length < 8) {
+      Alert.alert('Error', 'Password must be at least 8 characters');
       return;
     }
     try {
-      const result = await login({ email: email.trim().toLowerCase(), password }).unwrap();
-      const { user, accessToken, permissions, company } = result;
-      if (user?.role === 'customer') {
-        Alert.alert('Access Denied', 'Customers do not have access to the admin app.');
-        return;
-      }
-      dispatch(setCredentials({ user, accessToken, permissions, company }));
+      await register({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone.trim(),
+        password,
+      }).unwrap();
+      Alert.alert('Success', 'Registration successful. Please sign in.', [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ]);
     } catch (err: unknown) {
-      const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Login failed';
-      Alert.alert('Login Failed', msg);
+      const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Registration failed';
+      Alert.alert('Error', msg);
     }
   };
 
   return (
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        {/* Logo */}
-        <View style={styles.logoContainer}>
-          <View style={styles.logoBox}>
-            <Text style={styles.logoText}>KR</Text>
-          </View>
-          <Text style={styles.appName}>KREEDAM ADMIN</Text>
-          <Text style={styles.tagline}>Sports Venue Management</Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>Sign up to get started</Text>
         </View>
 
-        {/* Form */}
         <View style={styles.form}>
+          <Text style={styles.label}>Full Name</Text>
+          <TextInput
+            style={styles.input}
+            value={name}
+            onChangeText={setName}
+            placeholder="John Doe"
+            placeholderTextColor={COLORS.gray400}
+            autoCapitalize="words"
+          />
+
           <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
             value={email}
             onChangeText={setEmail}
-            placeholder="admin@example.com"
+            placeholder="you@example.com"
             placeholderTextColor={COLORS.gray400}
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
+          />
+
+          <Text style={styles.label}>Phone</Text>
+          <TextInput
+            style={styles.input}
+            value={phone}
+            onChangeText={setPhone}
+            placeholder="10-digit number"
+            placeholderTextColor={COLORS.gray400}
+            keyboardType="phone-pad"
+            maxLength={10}
           />
 
           <Text style={styles.label}>Password</Text>
@@ -66,7 +91,7 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (route: st
               style={[styles.input, styles.passwordInput]}
               value={password}
               onChangeText={setPassword}
-              placeholder="••••••••"
+              placeholder="Min 8 characters"
               placeholderTextColor={COLORS.gray400}
               secureTextEntry={!showPassword}
             />
@@ -75,24 +100,20 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (route: st
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.forgotBtn} onPress={() => navigation.navigate('ForgotPassword')}>
-            <Text style={styles.forgotText}>Forgot Password?</Text>
-          </TouchableOpacity>
-
           <TouchableOpacity
             style={[styles.button, isLoading && styles.buttonDisabled]}
-            onPress={handleLogin}
+            onPress={handleRegister}
             disabled={isLoading}
           >
             {isLoading
               ? <ActivityIndicator color={COLORS.white} />
-              : <Text style={styles.buttonText}>Sign In</Text>
+              : <Text style={styles.buttonText}>Sign Up</Text>
             }
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.signUpRow} onPress={() => navigation.navigate('SignUp')}>
-            <Text style={styles.signUpText}>Don't have an account? </Text>
-            <Text style={styles.signUpBold}>Sign Up</Text>
+          <TouchableOpacity style={styles.linkRow} onPress={() => navigation.goBack()}>
+            <Text style={styles.linkText}>Already have an account? </Text>
+            <Text style={styles.linkBold}>Sign In</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -103,15 +124,9 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (route: st
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: COLORS.white },
   container: { flexGrow: 1, justifyContent: 'center', padding: 24 },
-  logoContainer: { alignItems: 'center', marginBottom: 40 },
-  logoBox: {
-    width: 64, height: 64, borderRadius: 16,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center', alignItems: 'center', marginBottom: 12,
-  },
-  logoText: { color: COLORS.white, fontSize: 24, fontWeight: 'bold' },
-  appName: { fontSize: 28, fontWeight: 'bold', color: COLORS.gray900, marginBottom: 4 },
-  tagline: { fontSize: 14, color: COLORS.gray500 },
+  header: { alignItems: 'center', marginBottom: 32 },
+  title: { fontSize: 26, fontWeight: 'bold', color: COLORS.gray900 },
+  subtitle: { fontSize: 14, color: COLORS.gray500, marginTop: 4 },
   form: { gap: 4 },
   label: { fontSize: 14, fontWeight: '500', color: COLORS.gray700, marginBottom: 6, marginTop: 12 },
   input: {
@@ -129,9 +144,7 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.6 },
   buttonText: { color: COLORS.white, fontSize: 16, fontWeight: '600' },
-  forgotBtn: { alignSelf: 'flex-end', marginTop: 12 },
-  forgotText: { fontSize: 13, fontWeight: '500', color: COLORS.primary },
-  signUpRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 20 },
-  signUpText: { fontSize: 14, color: COLORS.gray500 },
-  signUpBold: { fontSize: 14, fontWeight: '600', color: COLORS.primary },
+  linkRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 20 },
+  linkText: { fontSize: 14, color: COLORS.gray500 },
+  linkBold: { fontSize: 14, fontWeight: '600', color: COLORS.primary },
 });

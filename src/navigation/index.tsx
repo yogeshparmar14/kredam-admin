@@ -2,12 +2,16 @@ import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useAppSelector, useAppDispatch } from '../store';
 import { setCredentials, setLoading } from '../store/slices/authSlice';
 import { LoginScreen } from '../screens/auth/LoginScreen';
+import { SignUpScreen } from '../screens/auth/SignUpScreen';
+import { ForgotPasswordScreen } from '../screens/auth/ForgotPasswordScreen';
+import { ResetPasswordScreen } from '../screens/auth/ResetPasswordScreen';
 import { DashboardScreen } from '../screens/dashboard/DashboardScreen';
 import { BookingsScreen } from '../screens/bookings/BookingsScreen';
 import { SlotBlocksScreen } from '../screens/slotBlocks/SlotBlocksScreen';
@@ -18,12 +22,16 @@ import { CourtsScreen } from '../screens/courts/CourtsScreen';
 import { MoreScreen } from '../screens/more/MoreScreen';
 import { RolesScreen } from '../screens/roles/RolesScreen';
 import { PricingScreen } from '../screens/pricing/PricingScreen';
+import { HomeScreen } from '../screens/home/HomeScreen';
+import { CustomDrawerContent } from './CustomDrawerContent';
 import { LoadingScreen } from '../components/ui/LoadingScreen';
 import { COLORS, STORAGE_KEYS } from '../constants';
 
 const RootStack = createNativeStackNavigator();
+const AuthStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const MoreStack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
 const TAB_ICONS: Record<string, string> = {
   Slots: '📅',
@@ -37,6 +45,17 @@ const HEADER_OPTS = {
   headerBackTitle: '',
   headerTintColor: COLORS.primary,
 };
+
+function AuthNavigator() {
+  return (
+    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+      <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="SignUp" component={SignUpScreen} />
+      <AuthStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <AuthStack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+    </AuthStack.Navigator>
+  );
+}
 
 function MoreNavigator() {
   return (
@@ -72,6 +91,24 @@ function AdminTabs() {
   );
 }
 
+function AdminDrawer() {
+  return (
+    <Drawer.Navigator
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      screenOptions={{
+        headerStyle: { backgroundColor: COLORS.white },
+        headerTitleStyle: { color: COLORS.gray900, fontWeight: '600' as const },
+        headerShadowVisible: false,
+        headerTintColor: COLORS.primary,
+        drawerType: 'front',
+      }}
+    >
+      <Drawer.Screen name="Home" component={HomeScreen} />
+      <Drawer.Screen name="Main" component={AdminTabs} options={{ headerShown: false, title: 'Slots' }} />
+    </Drawer.Navigator>
+  );
+}
+
 export function AppNavigator() {
   const dispatch = useAppDispatch();
   const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
@@ -79,12 +116,13 @@ export function AppNavigator() {
   useEffect(() => {
     const hydrate = async () => {
       try {
-        const stored = await AsyncStorage.getMany([
+        const pairs = await AsyncStorage.multiGet([
           STORAGE_KEYS.ACCESS_TOKEN,
           STORAGE_KEYS.USER,
           STORAGE_KEYS.PERMISSIONS,
           STORAGE_KEYS.COMPANY,
         ]);
+        const stored = Object.fromEntries(pairs);
         const accessToken = stored[STORAGE_KEYS.ACCESS_TOKEN];
         const user = stored[STORAGE_KEYS.USER] ? JSON.parse(stored[STORAGE_KEYS.USER]!) : null;
         const permissions = stored[STORAGE_KEYS.PERMISSIONS] ? JSON.parse(stored[STORAGE_KEYS.PERMISSIONS]!) : undefined;
@@ -108,9 +146,9 @@ export function AppNavigator() {
     <NavigationContainer>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         {isAuthenticated ? (
-          <RootStack.Screen name="Admin" component={AdminTabs} />
+          <RootStack.Screen name="Admin" component={AdminDrawer} />
         ) : (
-          <RootStack.Screen name="Login" component={LoginScreen} />
+          <RootStack.Screen name="Auth" component={AuthNavigator} />
         )}
       </RootStack.Navigator>
     </NavigationContainer>

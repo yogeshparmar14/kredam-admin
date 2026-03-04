@@ -59,7 +59,7 @@ const authSlice = createSlice({
       state.isPlatformOwner = false;
       state.isAuthenticated = false;
       state.isLoading = false;
-      AsyncStorage.removeMany(Object.values(STORAGE_KEYS));
+      AsyncStorage.multiRemove(Object.values(STORAGE_KEYS));
     },
 
     setLoading: (state, action: PayloadAction<boolean>) => {

@@ -1,8 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { clearCredentials } from '../../store/slices/authSlice';
-import { useLogoutMutation } from '../../store/api/authApi';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useAppSelector } from '../../store';
 import { COLORS } from '../../constants';
 
 interface MenuItem {
@@ -26,23 +24,7 @@ const MENU_ITEMS: MenuItem[] = [
 ];
 
 export function MoreScreen({ navigation }: { navigation: { navigate: (route: string) => void } }) {
-  const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-  const [logout] = useLogoutMutation();
-
-  const handleLogout = () => {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Logout',
-        style: 'destructive',
-        onPress: async () => {
-          try { await logout().unwrap(); } catch { /* ignore */ }
-          dispatch(clearCredentials());
-        },
-      },
-    ]);
-  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -78,11 +60,6 @@ export function MoreScreen({ navigation }: { navigation: { navigate: (route: str
         </TouchableOpacity>
       ))}
 
-      <View style={styles.divider} />
-
-      <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -118,10 +95,4 @@ const styles = StyleSheet.create({
   menuLabel: { fontSize: 15, fontWeight: '600', color: COLORS.gray900 },
   menuDescription: { fontSize: 12, color: COLORS.gray500, marginTop: 2 },
   chevron: { fontSize: 22, color: COLORS.gray400 },
-  divider: { height: 1, backgroundColor: COLORS.gray200, marginVertical: 20 },
-  logoutBtn: {
-    backgroundColor: '#dc262610', borderRadius: 12, paddingVertical: 14,
-    alignItems: 'center', borderWidth: 1, borderColor: '#dc262630',
-  },
-  logoutText: { fontSize: 15, fontWeight: '700', color: COLORS.danger },
 });

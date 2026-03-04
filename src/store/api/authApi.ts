@@ -6,6 +6,22 @@ interface LoginRequest {
   password: string;
 }
 
+interface RegisterRequest {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+}
+
+interface ForgotPasswordRequest {
+  email: string;
+}
+
+interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
 export interface LoginResponse {
   user: User;
   accessToken: string;
@@ -19,9 +35,18 @@ export const authApi = baseApi.injectEndpoints({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),
       transformResponse: (response: { data: LoginResponse }) => response.data,
     }),
+    register: builder.mutation<void, RegisterRequest>({
+      query: (body) => ({ url: '/auth/register', method: 'POST', body }),
+    }),
+    forgotPassword: builder.mutation<{ resetToken: string }, ForgotPasswordRequest>({
+      query: (body) => ({ url: '/auth/forgot-password', method: 'POST', body }),
+      transformResponse: (response: { data: { resetToken: string } }) => response.data,
+    }),
+    resetPassword: builder.mutation<void, ResetPasswordRequest>({
+      query: (body) => ({ url: '/auth/reset-password', method: 'POST', body }),
+    }),
     logout: builder.mutation<void, void>({
       query: () => ({ url: '/auth/logout', method: 'POST' }),
-      invalidatesTags: ['Auth'],
     }),
     getMe: builder.query<{ user: User; permissions: RolePermissions; company: CompanyContext | null }, void>({
       query: () => '/auth/me',
@@ -31,4 +56,11 @@ export const authApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation, useGetMeQuery } = authApi;
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
+  useLogoutMutation,
+  useGetMeQuery,
+} = authApi;

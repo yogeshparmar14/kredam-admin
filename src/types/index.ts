@@ -35,6 +35,17 @@ export interface RolePermissions {
   roleDisplayName: string;
 }
 
+export interface IRole {
+  id: string;
+  name: string;
+  displayName: string;
+  description?: string;
+  permissions: Record<string, ModulePermissions>;
+  isSystem: boolean;
+  isActive: boolean;
+  createdAt: string;
+}
+
 export interface IArena {
   id: string;
   name: string;
@@ -42,6 +53,46 @@ export interface IArena {
   address?: { street?: string; city?: string; state?: string };
   operatingHours?: { open: string; close: string };
   isActive: boolean;
+}
+
+export type DayType =
+  | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday'
+  | 'saturday' | 'sunday' | 'weekday' | 'weekend' | 'all';
+
+export interface ICourtPricingRule {
+  dayType: DayType;
+  startTime: string;
+  endTime: string;
+  price: number;
+}
+
+export interface ICourt {
+  id: string;
+  name: string;
+  arena: string;
+  arenaId: string;
+  sport?: string;
+  sportId?: string;
+  defaultPrice: number;
+  pricing: ICourtPricingRule[];
+  isActive: boolean;
+}
+
+export interface ISport {
+  id: string;
+  name: string;
+  type?: 'indoor' | 'outdoor' | 'both';
+  company?: string;
+}
+
+export interface IUser {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string;
 }
 
 export interface IBooking {

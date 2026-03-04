@@ -22,7 +22,7 @@ export function LoginScreen() {
     }
     try {
       const result = await login({ email: email.trim().toLowerCase(), password }).unwrap();
-      const { user, accessToken, permissions, company } = result.data;
+      const { user, accessToken, permissions, company } = result;
       dispatch(setCredentials({ user, accessToken, permissions, company }));
     } catch (err: unknown) {
       const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Login failed';

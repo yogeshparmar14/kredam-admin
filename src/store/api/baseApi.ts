@@ -55,6 +55,11 @@ export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
   keepUnusedDataFor: 300,
-  tagTypes: ['Auth', 'Arena', 'Booking', 'SlotBlock', 'Analytics'],
+  refetchOnMountOrArgChange: 120,
+  tagTypes: [
+    'Auth', 'Arena', 'Sport', 'Court', 'Company',
+    'Booking', 'Analytics', 'Report', 'Settings',
+    'User', 'BulkBooking', 'Role', 'SlotBlock',
+  ],
   endpoints: () => ({}),
 });

@@ -1,12 +1,12 @@
 import { baseApi } from './baseApi';
-import type { IApiResponse, RolePermissions, CompanyContext, User } from '../../types';
+import type { RolePermissions, CompanyContext, User } from '../../types';
 
 interface LoginRequest {
   email: string;
   password: string;
 }
 
-interface LoginResponse {
+export interface LoginResponse {
   user: User;
   accessToken: string;
   permissions: RolePermissions;
@@ -15,14 +15,17 @@ interface LoginResponse {
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation<IApiResponse<LoginResponse>, LoginRequest>({
+    login: builder.mutation<LoginResponse, LoginRequest>({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),
+      transformResponse: (response: { data: LoginResponse }) => response.data,
     }),
     logout: builder.mutation<void, void>({
       query: () => ({ url: '/auth/logout', method: 'POST' }),
+      invalidatesTags: ['Auth'],
     }),
-    getMe: builder.query<IApiResponse<{ user: User; permissions: RolePermissions; company: CompanyContext | null }>, void>({
+    getMe: builder.query<{ user: User; permissions: RolePermissions; company: CompanyContext | null }, void>({
       query: () => '/auth/me',
+      transformResponse: (response: { data: { user: User; permissions: RolePermissions; company: CompanyContext | null } }) => response.data,
       providesTags: ['Auth'],
     }),
   }),

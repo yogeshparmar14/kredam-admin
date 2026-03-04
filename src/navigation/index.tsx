@@ -11,17 +11,46 @@ import { LoginScreen } from '../screens/auth/LoginScreen';
 import { DashboardScreen } from '../screens/dashboard/DashboardScreen';
 import { BookingsScreen } from '../screens/bookings/BookingsScreen';
 import { SlotBlocksScreen } from '../screens/slotBlocks/SlotBlocksScreen';
+import { ArenasScreen } from '../screens/arenas/ArenasScreen';
+import { SportsScreen } from '../screens/sports/SportsScreen';
+import { CourtsScreen } from '../screens/courts/CourtsScreen';
+import { MoreScreen } from '../screens/more/MoreScreen';
+import { RolesScreen } from '../screens/roles/RolesScreen';
+import { PricingScreen } from '../screens/pricing/PricingScreen';
 import { LoadingScreen } from '../components/ui/LoadingScreen';
 import { COLORS, STORAGE_KEYS } from '../constants';
 
-const Stack = createNativeStackNavigator();
+const RootStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const MoreStack = createNativeStackNavigator();
 
 const TAB_ICONS: Record<string, string> = {
   Dashboard: '📊',
   Bookings: '📅',
   'Slot Blocks': '🚫',
+  More: '☰',
 };
+
+const HEADER_OPTS = {
+  headerStyle: { backgroundColor: COLORS.white },
+  headerTitleStyle: { color: COLORS.gray900, fontWeight: '600' as const },
+  headerShadowVisible: false,
+  headerBackTitle: '',
+  headerTintColor: COLORS.primary,
+};
+
+function MoreNavigator() {
+  return (
+    <MoreStack.Navigator screenOptions={HEADER_OPTS}>
+      <MoreStack.Screen name="MoreHome" component={MoreScreen} options={{ title: 'More' }} />
+      <MoreStack.Screen name="Arenas" component={ArenasScreen} />
+      <MoreStack.Screen name="Sports" component={SportsScreen} />
+      <MoreStack.Screen name="Courts" component={CourtsScreen} />
+      <MoreStack.Screen name="Roles" component={RolesScreen} />
+      <MoreStack.Screen name="Pricing" component={PricingScreen} />
+    </MoreStack.Navigator>
+  );
+}
 
 function AdminTabs() {
   return (
@@ -32,14 +61,13 @@ function AdminTabs() {
         tabBarInactiveTintColor: COLORS.gray400,
         tabBarStyle: { borderTopColor: COLORS.gray200, paddingBottom: 4, height: 60 },
         tabBarLabelStyle: { fontSize: 11, marginBottom: 4 },
-        headerStyle: { backgroundColor: COLORS.white },
-        headerTitleStyle: { color: COLORS.gray900, fontWeight: '600' },
-        headerShadowVisible: false,
+        ...HEADER_OPTS,
       })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Bookings" component={BookingsScreen} />
       <Tab.Screen name="Slot Blocks" component={SlotBlocksScreen} />
+      <Tab.Screen name="More" component={MoreNavigator} options={{ headerShown: false }} />
     </Tab.Navigator>
   );
 }
@@ -48,7 +76,6 @@ export function AppNavigator() {
   const dispatch = useAppDispatch();
   const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
 
-  // Hydrate auth state from AsyncStorage on app start
   useEffect(() => {
     const hydrate = async () => {
       try {
@@ -79,13 +106,13 @@ export function AppNavigator() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <RootStack.Navigator screenOptions={{ headerShown: false }}>
         {isAuthenticated ? (
-          <Stack.Screen name="Admin" component={AdminTabs} />
+          <RootStack.Screen name="Admin" component={AdminTabs} />
         ) : (
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <RootStack.Screen name="Login" component={LoginScreen} />
         )}
-      </Stack.Navigator>
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }

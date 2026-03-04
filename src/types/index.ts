@@ -52,6 +52,8 @@ export interface IArena {
   code: string;
   address?: { street?: string; city?: string; state?: string };
   operatingHours?: { open: string; close: string };
+  latitude?: number;
+  longitude?: number;
   isActive: boolean;
 }
 
@@ -70,9 +72,7 @@ export interface ICourt {
   id: string;
   name: string;
   arena: string;
-  arenaId: string;
   sport?: string;
-  sportId?: string;
   defaultPrice: number;
   pricing: ICourtPricingRule[];
   isActive: boolean;
@@ -81,7 +81,10 @@ export interface ICourt {
 export interface ISport {
   id: string;
   name: string;
-  type?: 'indoor' | 'outdoor' | 'both';
+  arena: string;
+  slotDuration: number;
+  defaultPrice: number;
+  isActive: boolean;
   company?: string;
 }
 
@@ -145,4 +148,60 @@ export interface IApiResponse<T> {
 export interface IPaginatedResponse<T> {
   data: T;
   pagination: IPagination;
+}
+
+export interface ICalendarCourtSport {
+  id: string;
+  name: string;
+  slotDuration: number;
+  defaultPrice: number;
+}
+
+export interface ICalendarCourt {
+  id: string;
+  name: string;
+  sport: ICalendarCourtSport;
+  defaultPrice: number;
+  pricing: ICourtPricingRule[];
+}
+
+export interface ICalendarBooking {
+  id: string;
+  bookingId: string;
+  courtId: string;
+  customerName: string;
+  bookingType: string;
+  startTime: string;
+  endTime: string;
+  status: string;
+}
+
+export interface ICalendarBlock {
+  id: string;
+  courtId: string;
+  startTime: string;
+  endTime: string;
+  reason: string;
+}
+
+export interface ICalendarData {
+  date: string;
+  facilityId: string;
+  operatingHours: { open: string; close: string };
+  courts: ICalendarCourt[];
+  bookings: ICalendarBooking[];
+  blocks: ICalendarBlock[];
+  stats: {
+    totalBookings: number;
+    revenue: number;
+    occupancyPercent: number;
+  };
+}
+
+export interface ISelectedSlot {
+  courtId: string;
+  courtName: string;
+  startTime: string;
+  endTime: string;
+  price: number;
 }

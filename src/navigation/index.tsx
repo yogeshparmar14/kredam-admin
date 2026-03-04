@@ -11,6 +11,7 @@ import { LoginScreen } from '../screens/auth/LoginScreen';
 import { DashboardScreen } from '../screens/dashboard/DashboardScreen';
 import { BookingsScreen } from '../screens/bookings/BookingsScreen';
 import { SlotBlocksScreen } from '../screens/slotBlocks/SlotBlocksScreen';
+import { SlotsScreen } from '../screens/slots/SlotsScreen';
 import { ArenasScreen } from '../screens/arenas/ArenasScreen';
 import { SportsScreen } from '../screens/sports/SportsScreen';
 import { CourtsScreen } from '../screens/courts/CourtsScreen';
@@ -25,10 +26,8 @@ const Tab = createBottomTabNavigator();
 const MoreStack = createNativeStackNavigator();
 
 const TAB_ICONS: Record<string, string> = {
-  Dashboard: '📊',
-  Bookings: '📅',
-  'Slot Blocks': '🚫',
-  More: '☰',
+  Slots: '📅',
+  Others: '☰',
 };
 
 const HEADER_OPTS = {
@@ -43,6 +42,9 @@ function MoreNavigator() {
   return (
     <MoreStack.Navigator screenOptions={HEADER_OPTS}>
       <MoreStack.Screen name="MoreHome" component={MoreScreen} options={{ title: 'More' }} />
+      <MoreStack.Screen name="Dashboard" component={DashboardScreen} />
+      <MoreStack.Screen name="Bookings" component={BookingsScreen} />
+      <MoreStack.Screen name="SlotBlocks" component={SlotBlocksScreen} options={{ title: 'Slot Blocks' }} />
       <MoreStack.Screen name="Arenas" component={ArenasScreen} />
       <MoreStack.Screen name="Sports" component={SportsScreen} />
       <MoreStack.Screen name="Courts" component={CourtsScreen} />
@@ -64,10 +66,8 @@ function AdminTabs() {
         ...HEADER_OPTS,
       })}
     >
-      <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="Bookings" component={BookingsScreen} />
-      <Tab.Screen name="Slot Blocks" component={SlotBlocksScreen} />
-      <Tab.Screen name="More" component={MoreNavigator} options={{ headerShown: false }} />
+      <Tab.Screen name="Slots" component={SlotsScreen} options={{ headerShown: false }} />
+      <Tab.Screen name="Others" component={MoreNavigator} options={{ headerShown: false }} />
     </Tab.Navigator>
   );
 }

@@ -6,6 +6,8 @@ interface ArenaBody {
   code?: string;
   address?: { street?: string; city?: string; state?: string };
   operatingHours?: { open: string; close: string };
+  latitude?: number;
+  longitude?: number;
 }
 
 export const arenaApi = baseApi.injectEndpoints({

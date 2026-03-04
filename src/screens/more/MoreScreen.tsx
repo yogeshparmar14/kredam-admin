@@ -14,6 +14,9 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
+  { icon: '📊', label: 'Dashboard', description: 'Overview & stats', route: 'Dashboard', color: COLORS.primary },
+  { icon: '📅', label: 'Bookings', description: 'View all bookings', route: 'Bookings', color: '#7c3aed' },
+  { icon: '🚫', label: 'Slot Blocks', description: 'Manage blocked slots', route: 'SlotBlocks', color: COLORS.warning },
   { icon: '🏟', label: 'Arenas', description: 'Manage your venues', route: 'Arenas', color: COLORS.primary },
   { icon: '🎾', label: 'Courts', description: 'Manage courts', route: 'Courts', color: '#7c3aed' },
   { icon: '💰', label: 'Pricing', description: 'Court pricing rules', route: 'Pricing', color: COLORS.success },

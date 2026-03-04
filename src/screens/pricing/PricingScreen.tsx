@@ -3,9 +3,9 @@ import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, Modal, TextInput, ScrollView, Alert,
 } from 'react-native';
-import { useGetCourtsQuery, useUpdateCourtMutation } from '../../store/api/courtApi';
+import { useGetCourtsByArenaQuery, useUpdateCourtMutation } from '../../store/api/courtApi';
 import { useGetArenasQuery } from '../../store/api/arenaApi';
-import { useGetSportsQuery } from '../../store/api/sportApi';
+import { useGetSportsByArenaQuery } from '../../store/api/sportApi';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
 import type { ICourt, IArena, ISport, ICourtPricingRule, DayType } from '../../types';
@@ -104,11 +104,8 @@ export function PricingScreen() {
   const [rules, setRules] = useState<RuleForm[]>([]);
 
   const { data: arenaData } = useGetArenasQuery({ limit: 50 });
-  const { data: sportData } = useGetSportsQuery();
-  const { data, isLoading, refetch } = useGetCourtsQuery(
-    { arenaId: selectedArenaId },
-    { skip: !selectedArenaId },
-  );
+  const { data: sportData } = useGetSportsByArenaQuery(selectedArenaId, { skip: !selectedArenaId });
+  const { data, isLoading, refetch } = useGetCourtsByArenaQuery(selectedArenaId, { skip: !selectedArenaId });
   const [updateCourt, { isLoading: saving }] = useUpdateCourtMutation();
 
   const arenas: IArena[] = arenaData?.data ?? [];

@@ -1,4 +1,4 @@
-export const API_URL = 'https://kreeda-backend.onrender.com/api/v1';
+export const API_URL = 'https://kreeda-backend-production.up.railway.app/api/v1';
 
 export const COLORS = {
   primary: '#2563eb',

@@ -3,16 +3,16 @@ import type { ICourt, ICourtPricingRule } from '../../types';
 
 interface CourtBody {
   name: string;
-  arenaId: string;
-  sportId?: string;
+  arena: string;
+  sport?: string;
   defaultPrice?: number;
   pricing?: ICourtPricingRule[];
 }
 
 export const courtApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getCourts: builder.query<ICourt[], { arenaId?: string }>({
-      query: (params) => ({ url: '/courts', params }),
+    getCourtsByArena: builder.query<ICourt[], string>({
+      query: (arenaId) => `/courts/arena/${arenaId}`,
       transformResponse: (response: { data: ICourt[] }) => response.data,
       providesTags: ['Court'],
     }),
@@ -28,7 +28,7 @@ export const courtApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetCourtsQuery,
+  useGetCourtsByArenaQuery,
   useCreateCourtMutation,
   useUpdateCourtMutation,
 } = courtApi;

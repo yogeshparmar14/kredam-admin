@@ -10,7 +10,7 @@ import type { IArena } from '../../types';
 
 const emptyForm = () => ({
   name: '', code: '', street: '', city: '', state: '',
-  open: '06:00', close: '22:00',
+  open: '06:00', close: '22:00', latitude: '', longitude: '',
 });
 
 function ArenaCard({ arena, onEdit }: { arena: IArena; onEdit: (a: IArena) => void }) {
@@ -65,6 +65,8 @@ export function ArenasScreen() {
       state: arena.address?.state ?? '',
       open: arena.operatingHours?.open ?? '06:00',
       close: arena.operatingHours?.close ?? '22:00',
+      latitude: arena.latitude?.toString() ?? '',
+      longitude: arena.longitude?.toString() ?? '',
     });
     setShowForm(true);
   };
@@ -79,6 +81,8 @@ export function ArenasScreen() {
       code: form.code || undefined,
       address: { street: form.street, city: form.city, state: form.state },
       operatingHours: { open: form.open, close: form.close },
+      latitude: form.latitude ? parseFloat(form.latitude) : undefined,
+      longitude: form.longitude ? parseFloat(form.longitude) : undefined,
     };
     try {
       if (editArena) {
@@ -173,6 +177,33 @@ export function ArenasScreen() {
                   onChangeText={(v) => setForm((f) => ({ ...f, state: v }))}
                   placeholder="State"
                   placeholderTextColor={COLORS.gray400}
+                />
+              </View>
+            </View>
+
+            <Text style={styles.sectionLabel}>Location</Text>
+            <View style={styles.twoCol}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.fieldLabel}>Latitude</Text>
+                <TextInput
+                  style={styles.input}
+                  value={form.latitude}
+                  onChangeText={(v) => setForm((f) => ({ ...f, latitude: v }))}
+                  placeholder="e.g. 12.9716"
+                  placeholderTextColor={COLORS.gray400}
+                  keyboardType="decimal-pad"
+                />
+              </View>
+              <View style={{ width: 12 }} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.fieldLabel}>Longitude</Text>
+                <TextInput
+                  style={styles.input}
+                  value={form.longitude}
+                  onChangeText={(v) => setForm((f) => ({ ...f, longitude: v }))}
+                  placeholder="e.g. 77.5946"
+                  placeholderTextColor={COLORS.gray400}
+                  keyboardType="decimal-pad"
                 />
               </View>
             </View>

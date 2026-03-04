@@ -9,8 +9,8 @@ import {
   useReleaseSlotBlockMutation,
 } from '../../store/api/slotBlockApi';
 import { useGetArenasQuery } from '../../store/api/arenaApi';
-import { useGetCourtsQuery } from '../../store/api/courtApi';
-import { useGetSportsQuery } from '../../store/api/sportApi';
+import { useGetCourtsByArenaQuery } from '../../store/api/courtApi';
+import { useGetSportsByArenaQuery } from '../../store/api/sportApi';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
 import type { ISlotBlock } from '../../types';
@@ -66,17 +66,14 @@ export function SlotBlocksScreen() {
     ...(filterReleased !== undefined && { isReleased: filterReleased }),
   });
   const { data: arenaData } = useGetArenasQuery({ limit: 50 });
-  const { data: courtData } = useGetCourtsQuery(
-    { arenaId: form.arenaId },
-    { skip: !form.arenaId },
-  );
-  const { data: sportData } = useGetSportsQuery();
+  const { data: courtData } = useGetCourtsByArenaQuery(form.arenaId, { skip: !form.arenaId });
+  const { data: sportData } = useGetSportsByArenaQuery(form.arenaId, { skip: !form.arenaId });
   const [createSlotBlock, { isLoading: creating }] = useCreateSlotBlockMutation();
   const [releaseSlotBlock] = useReleaseSlotBlockMutation();
 
-  const blocks = data?.data ?? [];
+  const blocks = data ?? [];
   const arenas = arenaData?.data ?? [];
-  const courts = (courtData as { id: string; name: string }[] | undefined) ?? [];
+  const courts = courtData ?? [];
   const sports = sportData ?? [];
 
   const shiftDate = (days: number) => {
@@ -114,7 +111,6 @@ export function SlotBlocksScreen() {
         startTime: form.startTime,
         endTime: form.endTime,
         reason: form.reason,
-        mode: form.mode,
         ...(form.mode === 'court' && { courtId: form.courtId }),
         ...(form.mode === 'sport' && { sportId: form.sportId }),
       }).unwrap();
@@ -256,7 +252,7 @@ export function SlotBlocksScreen() {
               <>
                 <Text style={styles.fieldLabel}>Court *</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.pickerRow}>
-                  {(courts as { id: string; name: string }[]).map((c) => (
+                  {courts.map((c) => (
                     <TouchableOpacity
                       key={c.id}
                       style={[styles.pickerChip, form.courtId === c.id && styles.pickerChipActive]}

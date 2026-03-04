@@ -1,5 +1,5 @@
 import { baseApi } from './baseApi';
-import type { ISlotBlock, IPaginatedResponse } from '../../types';
+import type { ISlotBlock } from '../../types';
 
 interface CreateSlotBlockBody {
   arenaId: string;
@@ -7,7 +7,6 @@ interface CreateSlotBlockBody {
   startTime: string;
   endTime: string;
   reason: string;
-  mode: 'court' | 'sport';
   courtId?: string;
   sportId?: string;
 }
@@ -15,11 +14,11 @@ interface CreateSlotBlockBody {
 export const slotBlockApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getSlotBlocks: builder.query<
-      IPaginatedResponse<ISlotBlock[]>,
-      { arenaId?: string; date?: string; isReleased?: boolean; page?: number; limit?: number }
+      ISlotBlock[],
+      { arenaId?: string; date?: string; isReleased?: boolean }
     >({
       query: (params) => ({ url: '/slot-blocks', params }),
-      transformResponse: (response: { data: IPaginatedResponse<ISlotBlock[]> }) => response.data,
+      transformResponse: (response: { data: ISlotBlock[] }) => response.data,
       providesTags: ['SlotBlock'],
     }),
     createSlotBlock: builder.mutation<void, CreateSlotBlockBody>({

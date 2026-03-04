@@ -3,14 +3,14 @@ import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, Modal, TextInput, ScrollView, Alert,
 } from 'react-native';
-import { useGetCourtsQuery, useCreateCourtMutation, useUpdateCourtMutation } from '../../store/api/courtApi';
+import { useGetCourtsByArenaQuery, useCreateCourtMutation, useUpdateCourtMutation } from '../../store/api/courtApi';
 import { useGetArenasQuery } from '../../store/api/arenaApi';
-import { useGetSportsQuery } from '../../store/api/sportApi';
+import { useGetSportsByArenaQuery } from '../../store/api/sportApi';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
 import type { ICourt, IArena, ISport } from '../../types';
 
-const emptyForm = () => ({ name: '', arenaId: '', sportId: '' });
+const emptyForm = () => ({ name: '', arena: '', sport: '' });
 
 function CourtCard({ court, onEdit }: { court: ICourt; onEdit: (c: ICourt) => void }) {
   return (
@@ -39,9 +39,9 @@ export function CourtsScreen() {
   const [form, setForm] = useState(emptyForm());
 
   const { data: arenaData } = useGetArenasQuery({ limit: 50 });
-  const { data: sportData } = useGetSportsQuery();
-  const { data, isLoading, refetch } = useGetCourtsQuery(
-    { arenaId: selectedArenaId },
+  const { data: sportData } = useGetSportsByArenaQuery(selectedArenaId, { skip: !selectedArenaId });
+  const { data, isLoading, refetch } = useGetCourtsByArenaQuery(
+    selectedArenaId,
     { skip: !selectedArenaId },
   );
   const [createCourt, { isLoading: creating }] = useCreateCourtMutation();
@@ -53,25 +53,25 @@ export function CourtsScreen() {
 
   const openCreate = () => {
     setEditCourt(null);
-    setForm({ ...emptyForm(), arenaId: selectedArenaId });
+    setForm({ ...emptyForm(), arena: selectedArenaId });
     setShowForm(true);
   };
 
   const openEdit = (court: ICourt) => {
     setEditCourt(court);
-    setForm({ name: court.name, arenaId: court.arenaId, sportId: court.sportId ?? '' });
+    setForm({ name: court.name, arena: court.arena, sport: court.sport ?? '' });
     setShowForm(true);
   };
 
   const handleSubmit = async () => {
-    if (!form.name || !form.arenaId) {
+    if (!form.name || !form.arena) {
       Alert.alert('Error', 'Court name and arena are required.');
       return;
     }
     const payload = {
       name: form.name,
-      arenaId: form.arenaId,
-      ...(form.sportId && { sportId: form.sportId }),
+      arena: form.arena,
+      ...(form.sport && { sport: form.sport }),
     };
     try {
       if (editCourt) {
@@ -161,10 +161,10 @@ export function CourtsScreen() {
               {arenas.map((a) => (
                 <TouchableOpacity
                   key={a.id}
-                  style={[styles.pickerChip, form.arenaId === a.id && styles.pickerChipActive]}
-                  onPress={() => setForm((f) => ({ ...f, arenaId: a.id }))}
+                  style={[styles.pickerChip, form.arena === a.id && styles.pickerChipActive]}
+                  onPress={() => setForm((f) => ({ ...f, arena: a.id }))}
                 >
-                  <Text style={[styles.pickerChipText, form.arenaId === a.id && styles.pickerChipTextActive]}>
+                  <Text style={[styles.pickerChipText, form.arena === a.id && styles.pickerChipTextActive]}>
                     {a.name}
                   </Text>
                 </TouchableOpacity>
@@ -174,18 +174,18 @@ export function CourtsScreen() {
             <Text style={styles.fieldLabel}>Sport</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.pickerRow}>
               <TouchableOpacity
-                style={[styles.pickerChip, !form.sportId && styles.pickerChipActive]}
-                onPress={() => setForm((f) => ({ ...f, sportId: '' }))}
+                style={[styles.pickerChip, !form.sport && styles.pickerChipActive]}
+                onPress={() => setForm((f) => ({ ...f, sport: '' }))}
               >
-                <Text style={[styles.pickerChipText, !form.sportId && styles.pickerChipTextActive]}>None</Text>
+                <Text style={[styles.pickerChipText, !form.sport && styles.pickerChipTextActive]}>None</Text>
               </TouchableOpacity>
               {sports.map((s) => (
                 <TouchableOpacity
                   key={s.id}
-                  style={[styles.pickerChip, form.sportId === s.id && styles.pickerChipActive]}
-                  onPress={() => setForm((f) => ({ ...f, sportId: s.id }))}
+                  style={[styles.pickerChip, form.sport === s.id && styles.pickerChipActive]}
+                  onPress={() => setForm((f) => ({ ...f, sport: s.id }))}
                 >
-                  <Text style={[styles.pickerChipText, form.sportId === s.id && styles.pickerChipTextActive]}>
+                  <Text style={[styles.pickerChipText, form.sport === s.id && styles.pickerChipTextActive]}>
                     {s.name}
                   </Text>
                 </TouchableOpacity>

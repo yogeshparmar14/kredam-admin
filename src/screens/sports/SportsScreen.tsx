@@ -3,34 +3,19 @@ import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, Modal, TextInput, ScrollView, Alert,
 } from 'react-native';
-import { useGetSportsQuery, useCreateSportMutation, useUpdateSportMutation } from '../../store/api/sportApi';
+import { useGetSportsByArenaQuery, useCreateSportMutation, useUpdateSportMutation } from '../../store/api/sportApi';
+import { useGetArenasQuery } from '../../store/api/arenaApi';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
-import type { ISport } from '../../types';
-
-const SPORT_TYPES = ['indoor', 'outdoor', 'both'] as const;
-type SportType = typeof SPORT_TYPES[number];
-
-const TYPE_COLORS: Record<SportType, string> = {
-  indoor: COLORS.primary,
-  outdoor: COLORS.success,
-  both: COLORS.warning,
-};
+import type { ISport, IArena } from '../../types';
 
 function SportCard({ sport, onEdit }: { sport: ISport; onEdit: (s: ISport) => void }) {
-  const typeColor = TYPE_COLORS[sport.type ?? 'indoor'] ?? COLORS.gray400;
   return (
     <Card>
       <View style={styles.cardRow}>
-        <View>
+        <View style={{ flex: 1 }}>
           <Text style={styles.sportName}>{sport.name}</Text>
-          {sport.type && (
-            <View style={[styles.typeBadge, { backgroundColor: typeColor + '20' }]}>
-              <Text style={[styles.typeText, { color: typeColor }]}>
-                {sport.type.charAt(0).toUpperCase() + sport.type.slice(1)}
-              </Text>
-            </View>
-          )}
+          <Text style={styles.sportMeta}>₹{sport.defaultPrice}/slot · {sport.slotDuration}min</Text>
         </View>
         <TouchableOpacity style={styles.editBtn} onPress={() => onEdit(sport)}>
           <Text style={styles.editBtnText}>Edit</Text>
@@ -41,28 +26,37 @@ function SportCard({ sport, onEdit }: { sport: ISport; onEdit: (s: ISport) => vo
 }
 
 export function SportsScreen() {
+  const [selectedArenaId, setSelectedArenaId] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editSport, setEditSport] = useState<ISport | null>(null);
   const [name, setName] = useState('');
-  const [type, setType] = useState<SportType>('indoor');
+  const [slotDuration, setSlotDuration] = useState('60');
+  const [defaultPrice, setDefaultPrice] = useState('');
 
-  const { data, isLoading, refetch } = useGetSportsQuery();
+  const { data: arenaData } = useGetArenasQuery({ limit: 50 });
+  const { data, isLoading, refetch } = useGetSportsByArenaQuery(
+    selectedArenaId,
+    { skip: !selectedArenaId },
+  );
   const [createSport, { isLoading: creating }] = useCreateSportMutation();
   const [updateSport, { isLoading: updating }] = useUpdateSportMutation();
 
+  const arenas: IArena[] = arenaData?.data ?? [];
   const sports = data ?? [];
 
   const openCreate = () => {
     setEditSport(null);
     setName('');
-    setType('indoor');
+    setSlotDuration('60');
+    setDefaultPrice('');
     setShowForm(true);
   };
 
   const openEdit = (sport: ISport) => {
     setEditSport(sport);
     setName(sport.name);
-    setType(sport.type ?? 'indoor');
+    setSlotDuration(String(sport.slotDuration));
+    setDefaultPrice(String(sport.defaultPrice));
     setShowForm(true);
   };
 
@@ -71,11 +65,21 @@ export function SportsScreen() {
       Alert.alert('Error', 'Sport name is required.');
       return;
     }
+    const duration = parseInt(slotDuration, 10);
+    const price = parseFloat(defaultPrice);
+    if (isNaN(duration) || duration <= 0) {
+      Alert.alert('Error', 'Enter a valid slot duration in minutes.');
+      return;
+    }
+    if (isNaN(price) || price < 0) {
+      Alert.alert('Error', 'Enter a valid default price.');
+      return;
+    }
     try {
       if (editSport) {
-        await updateSport({ id: editSport.id, name, type }).unwrap();
+        await updateSport({ id: editSport.id, name, slotDuration: duration, defaultPrice: price }).unwrap();
       } else {
-        await createSport({ name, type }).unwrap();
+        await createSport({ arena: selectedArenaId, name, slotDuration: duration, defaultPrice: price }).unwrap();
       }
       setShowForm(false);
     } catch {
@@ -87,25 +91,54 @@ export function SportsScreen() {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={sports}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <SportCard sport={item} onEdit={openEdit} />}
-        contentContainerStyle={styles.list}
-        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
-        ListEmptyComponent={
-          !isLoading ? (
-            <View style={styles.empty}>
-              <Text style={styles.emptyIcon}>🏃</Text>
-              <Text style={styles.emptyText}>No sports yet</Text>
-            </View>
-          ) : null
-        }
-      />
+      {/* Arena selector */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.arenaSelector}
+        contentContainerStyle={styles.arenaSelectorContent}
+      >
+        {arenas.map((a) => (
+          <TouchableOpacity
+            key={a.id}
+            style={[styles.arenaChip, selectedArenaId === a.id && styles.arenaChipActive]}
+            onPress={() => setSelectedArenaId(a.id)}
+          >
+            <Text style={[styles.arenaChipText, selectedArenaId === a.id && styles.arenaChipTextActive]}>
+              {a.name}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
 
-      <TouchableOpacity style={styles.fab} onPress={openCreate}>
-        <Text style={styles.fabText}>+ Sport</Text>
-      </TouchableOpacity>
+      {!selectedArenaId ? (
+        <View style={styles.empty}>
+          <Text style={styles.emptyIcon}>🏟</Text>
+          <Text style={styles.emptyText}>Select an arena to view sports</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={sports}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <SportCard sport={item} onEdit={openEdit} />}
+          contentContainerStyle={styles.list}
+          refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
+          ListEmptyComponent={
+            !isLoading ? (
+              <View style={styles.empty}>
+                <Text style={styles.emptyIcon}>🏃</Text>
+                <Text style={styles.emptyText}>No sports yet</Text>
+              </View>
+            ) : null
+          }
+        />
+      )}
+
+      {selectedArenaId && (
+        <TouchableOpacity style={styles.fab} onPress={openCreate}>
+          <Text style={styles.fabText}>+ Sport</Text>
+        </TouchableOpacity>
+      )}
 
       <Modal visible={showForm} animationType="slide" presentationStyle="pageSheet">
         <View style={styles.modal}>
@@ -125,20 +158,25 @@ export function SportsScreen() {
               placeholderTextColor={COLORS.gray400}
             />
 
-            <Text style={styles.fieldLabel}>Type</Text>
-            <View style={styles.typeRow}>
-              {SPORT_TYPES.map((t) => (
-                <TouchableOpacity
-                  key={t}
-                  style={[styles.typeBtn, type === t && styles.typeBtnActive]}
-                  onPress={() => setType(t)}
-                >
-                  <Text style={[styles.typeBtnText, type === t && styles.typeBtnTextActive]}>
-                    {t.charAt(0).toUpperCase() + t.slice(1)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <Text style={styles.fieldLabel}>Slot Duration (minutes) *</Text>
+            <TextInput
+              style={styles.input}
+              value={slotDuration}
+              onChangeText={setSlotDuration}
+              placeholder="60"
+              placeholderTextColor={COLORS.gray400}
+              keyboardType="numeric"
+            />
+
+            <Text style={styles.fieldLabel}>Default Price (₹) *</Text>
+            <TextInput
+              style={styles.input}
+              value={defaultPrice}
+              onChangeText={setDefaultPrice}
+              placeholder="e.g. 500"
+              placeholderTextColor={COLORS.gray400}
+              keyboardType="numeric"
+            />
 
             <TouchableOpacity
               style={[styles.submitBtn, busy && styles.submitBtnDisabled]}
@@ -158,10 +196,21 @@ export function SportsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.gray50 },
+  arenaSelector: {
+    backgroundColor: COLORS.white, borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
+  },
+  arenaSelectorContent: { paddingHorizontal: 16, paddingVertical: 10, gap: 8 },
+  arenaChip: {
+    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
+    backgroundColor: COLORS.gray100, borderWidth: 1, borderColor: COLORS.gray200,
+  },
+  arenaChipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
+  arenaChipText: { fontSize: 13, color: COLORS.gray700 },
+  arenaChipTextActive: { color: COLORS.white },
   list: { padding: 16, paddingBottom: 100 },
-  empty: { alignItems: 'center', marginTop: 80 },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80 },
   emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: COLORS.gray400, fontSize: 15 },
+  emptyText: { color: COLORS.gray400, fontSize: 15, textAlign: 'center', paddingHorizontal: 40 },
   fab: {
     position: 'absolute', bottom: 24, right: 20,
     backgroundColor: COLORS.primary, borderRadius: 28,
@@ -176,8 +225,7 @@ const styles = StyleSheet.create({
   },
   editBtnText: { fontSize: 12, fontWeight: '600', color: COLORS.primary },
   sportName: { fontSize: 15, fontWeight: '700', color: COLORS.gray900, marginBottom: 4 },
-  typeBadge: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3, alignSelf: 'flex-start' },
-  typeText: { fontSize: 11, fontWeight: '600' },
+  sportMeta: { fontSize: 12, color: COLORS.gray500 },
   modal: { flex: 1, backgroundColor: COLORS.white },
   modalHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
@@ -192,14 +240,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14, paddingVertical: 10,
     fontSize: 14, color: COLORS.gray900, backgroundColor: COLORS.white,
   },
-  typeRow: { flexDirection: 'row', gap: 10 },
-  typeBtn: {
-    flex: 1, paddingVertical: 10, borderRadius: 10, alignItems: 'center',
-    borderWidth: 1, borderColor: COLORS.gray200, backgroundColor: COLORS.white,
-  },
-  typeBtnActive: { borderColor: COLORS.primary, backgroundColor: COLORS.primaryLight },
-  typeBtnText: { fontSize: 13, fontWeight: '600', color: COLORS.gray600 } as never,
-  typeBtnTextActive: { color: COLORS.primary },
   submitBtn: {
     marginTop: 28, marginBottom: 40, backgroundColor: COLORS.primary,
     borderRadius: 12, paddingVertical: 14, alignItems: 'center',

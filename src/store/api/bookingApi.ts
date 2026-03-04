@@ -1,5 +1,5 @@
 import { baseApi } from './baseApi';
-import type { IBooking, IPaginatedResponse } from '../../types';
+import type { IBooking, ICalendarData, IPaginatedResponse } from '../../types';
 
 interface GetBookingsParams {
   page?: number;
@@ -7,6 +7,19 @@ interface GetBookingsParams {
   status?: string;
   arenaId?: string;
   date?: string;
+}
+
+interface CreateBookingBody {
+  arenaId: string;
+  courtId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  customer: { name: string; phone: string; email?: string };
+  payment: { mode: string; total: number; paid?: number };
+  bookingType?: string;
+  source?: string;
+  notes?: string;
 }
 
 export const bookingApi = baseApi.injectEndpoints({
@@ -25,10 +38,15 @@ export const bookingApi = baseApi.injectEndpoints({
       query: ({ id, ...body }) => ({ url: `/bookings/${id}/cancel`, method: 'PATCH', body }),
       invalidatesTags: ['Booking'],
     }),
-    getCalendarData: builder.query<unknown, { arenaId: string; date: string }>({
+    getCalendarData: builder.query<ICalendarData, { facilityId: string; date: string }>({
       query: (params) => ({ url: '/bookings/calendar', params }),
-      transformResponse: (response: { data: unknown }) => response.data,
+      transformResponse: (response: { data: ICalendarData }) => response.data,
       providesTags: ['Booking'],
+    }),
+    createBooking: builder.mutation<IBooking, CreateBookingBody>({
+      query: (body) => ({ url: '/bookings', method: 'POST', body }),
+      transformResponse: (response: { data: IBooking }) => response.data,
+      invalidatesTags: ['Booking'],
     }),
   }),
 });
@@ -38,4 +56,5 @@ export const {
   useGetBookingByIdQuery,
   useCancelBookingMutation,
   useGetCalendarDataQuery,
+  useCreateBookingMutation,
 } = bookingApi;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Image,
   KeyboardAvoidingView, Platform, ScrollView, Alert, ActivityIndicator,
 } from 'react-native';
 import { useLoginMutation } from '../../store/api/authApi';
@@ -39,9 +39,7 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (route: st
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         {/* Logo */}
         <View style={styles.logoContainer}>
-          <View style={styles.logoBox}>
-            <Text style={styles.logoText}>KR</Text>
-          </View>
+          <Image source={require('../../assets/logo.png')} style={styles.logo} resizeMode="contain" />
           <Text style={styles.appName}>KREEDAM ADMIN</Text>
           <Text style={styles.tagline}>Sports Venue Management</Text>
         </View>
@@ -104,12 +102,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: COLORS.white },
   container: { flexGrow: 1, justifyContent: 'center', padding: 24 },
   logoContainer: { alignItems: 'center', marginBottom: 40 },
-  logoBox: {
-    width: 64, height: 64, borderRadius: 16,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center', alignItems: 'center', marginBottom: 12,
-  },
-  logoText: { color: COLORS.white, fontSize: 24, fontWeight: 'bold' },
+  logo: { width: 120, height: 120, marginBottom: 12 },
   appName: { fontSize: 28, fontWeight: 'bold', color: COLORS.gray900, marginBottom: 4 },
   tagline: { fontSize: 14, color: COLORS.gray500 },
   form: { gap: 4 },

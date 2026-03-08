@@ -13,6 +13,7 @@ import {
 } from '../../store/api/roleApi';
 import { PermissionMatrix } from '../../components/shared/PermissionMatrix';
 import { Card } from '../../components/ui/Card';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { COLORS } from '../../constants';
 import type { IRole, ModulePermissions } from '../../types';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
@@ -203,6 +204,7 @@ export function RolesScreen() {
 
   return (
     <View style={styles.container}>
+      <ScreenHeader title="Roles" />
       <TextInput
         style={styles.search}
         placeholder="Search roles..."

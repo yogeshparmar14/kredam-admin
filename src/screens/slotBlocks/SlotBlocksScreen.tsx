@@ -13,6 +13,7 @@ import { useGetArenasQuery } from '../../store/api/arenaApi';
 import { useGetCourtsByArenaQuery } from '../../store/api/courtApi';
 import { useGetSportsByArenaQuery } from '../../store/api/sportApi';
 import { Card } from '../../components/ui/Card';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { COLORS } from '../../constants';
 import type { ISlotBlock } from '../../types';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
@@ -131,6 +132,7 @@ export function SlotBlocksScreen() {
 
   return (
     <View style={styles.container}>
+      <ScreenHeader title="Slot Blocks" />
       {/* Date bar */}
       <View style={styles.datebar}>
         <TouchableOpacity onPress={() => shiftDate(-1)}>

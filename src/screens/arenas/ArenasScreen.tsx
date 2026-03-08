@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { useGetArenasQuery, useCreateArenaMutation, useUpdateArenaMutation } from '../../store/api/arenaApi';
 import { Card } from '../../components/ui/Card';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { COLORS } from '../../constants';
 import type { IArena } from '../../types';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
@@ -102,6 +103,7 @@ export function ArenasScreen() {
 
   return (
     <View style={styles.container}>
+      <ScreenHeader title="Arenas" />
       <FlatList
         data={arenas}
         keyExtractor={(item) => item.id}

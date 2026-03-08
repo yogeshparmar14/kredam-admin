@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
 import { Card } from '../../components/ui/Card';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { COLORS } from '../../constants';
 import { wp, hp, fs, isTablet } from '../../utils/responsive';
 
@@ -9,7 +10,9 @@ export function DashboardScreen() {
   const { user, company } = useAuth();
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <View style={{ flex: 1, backgroundColor: COLORS.gray50 }}>
+      <ScreenHeader title="Dashboard" />
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Welcome back,</Text>
@@ -42,6 +45,7 @@ export function DashboardScreen() {
         </Card>
       )}
     </ScrollView>
+    </View>
   );
 }
 

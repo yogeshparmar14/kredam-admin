@@ -7,6 +7,7 @@ import {
 import { useGetSportsByArenaQuery, useCreateSportMutation, useUpdateSportMutation } from '../../store/api/sportApi';
 import { useGetArenasQuery } from '../../store/api/arenaApi';
 import { Card } from '../../components/ui/Card';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { COLORS } from '../../constants';
 import type { ISport, IArena } from '../../types';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
@@ -93,6 +94,7 @@ export function SportsScreen() {
 
   return (
     <View style={styles.container}>
+      <ScreenHeader title="Sports" />
       {/* Arena selector */}
       <ScrollView
         horizontal

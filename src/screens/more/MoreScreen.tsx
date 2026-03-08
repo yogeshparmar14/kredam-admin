@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { useAppSelector } from '../../store';
 import { COLORS } from '../../constants';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { useGetArenasQuery } from '../../store/api/arenaApi';
 
 interface MenuItem {
   icon: string;
@@ -25,23 +27,14 @@ const MENU_ITEMS: MenuItem[] = [
 
 export function MoreScreen({ navigation }: { navigation: { navigate: (route: string) => void } }) {
   const { user } = useAppSelector((state) => state.auth);
+  const { data: arenaData } = useGetArenasQuery({ limit: 50 });
+  const arenas = arenaData?.data ?? [];
 
   return (
+    <View style={styles.wrapper}>
+      <ScreenHeader title={arenas[0]?.name ?? 'More'} />
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Profile card */}
-      <View style={styles.profileCard}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{user?.name?.charAt(0)?.toUpperCase() ?? '?'}</Text>
-        </View>
-        <View>
-          <Text style={styles.userName}>{user?.name}</Text>
-          <Text style={styles.userEmail}>{user?.email}</Text>
-          <Text style={styles.userRole}>{user?.role?.replace(/_/g, ' ')}</Text>
-        </View>
-      </View>
-
       {/* Menu items */}
-      <Text style={styles.sectionLabel}>Management</Text>
       {MENU_ITEMS.map((item) => (
         <TouchableOpacity
           key={item.route}
@@ -61,11 +54,13 @@ export function MoreScreen({ navigation }: { navigation: { navigate: (route: str
       ))}
 
     </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.gray50 },
+  wrapper: { flex: 1, backgroundColor: COLORS.gray50 },
+  container: { flex: 1 },
   content: { padding: wp(16), paddingBottom: hp(40), maxWidth: isTablet ? wp(600) : undefined, alignSelf: 'center' as const, width: '100%' },
   profileCard: {
     flexDirection: 'row', alignItems: 'center', gap: wp(14),

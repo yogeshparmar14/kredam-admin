@@ -59,11 +59,11 @@ function AuthNavigator() {
 
 function MoreNavigator() {
   return (
-    <MoreStack.Navigator screenOptions={HEADER_OPTS}>
-      <MoreStack.Screen name="MoreHome" component={MoreScreen} options={{ title: 'More' }} />
+    <MoreStack.Navigator screenOptions={{ headerShown: false }}>
+      <MoreStack.Screen name="MoreHome" component={MoreScreen} />
       <MoreStack.Screen name="Dashboard" component={DashboardScreen} />
       <MoreStack.Screen name="Bookings" component={BookingsScreen} />
-      <MoreStack.Screen name="SlotBlocks" component={SlotBlocksScreen} options={{ title: 'Slot Blocks' }} />
+      <MoreStack.Screen name="SlotBlocks" component={SlotBlocksScreen} />
       <MoreStack.Screen name="Arenas" component={ArenasScreen} />
       <MoreStack.Screen name="Sports" component={SportsScreen} />
       <MoreStack.Screen name="Courts" component={CourtsScreen} />

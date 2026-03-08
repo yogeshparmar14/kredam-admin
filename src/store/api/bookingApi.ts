@@ -11,12 +11,12 @@ interface GetBookingsParams {
 
 interface CreateBookingBody {
   arenaId: string;
-  courtId: string;
+  courtId?: string;
   date: string;
   startTime: string;
   endTime: string;
   customer: { name: string; phone: string; email?: string };
-  payment: { mode: string; total: number; paid?: number };
+  payment: { mode?: string; total: number; paid?: number; discount?: number };
   bookingType?: string;
   source?: string;
   notes?: string;
@@ -38,7 +38,7 @@ export const bookingApi = baseApi.injectEndpoints({
       query: ({ id, ...body }) => ({ url: `/bookings/${id}/cancel`, method: 'PATCH', body }),
       invalidatesTags: ['Booking'],
     }),
-    getCalendarData: builder.query<ICalendarData, { facilityId: string; date: string }>({
+    getCalendarData: builder.query<ICalendarData, { arenaId: string; date: string }>({
       query: (params) => ({ url: '/bookings/calendar', params }),
       transformResponse: (response: { data: ICalendarData }) => response.data,
       providesTags: ['Booking'],

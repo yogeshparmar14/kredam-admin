@@ -8,6 +8,7 @@ import { useGetCourtsByArenaQuery, useCreateCourtMutation, useUpdateCourtMutatio
 import { useGetArenasQuery } from '../../store/api/arenaApi';
 import { useGetSportsByArenaQuery } from '../../store/api/sportApi';
 import { Card } from '../../components/ui/Card';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { COLORS } from '../../constants';
 import type { ICourt, IArena, ISport } from '../../types';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
@@ -91,6 +92,7 @@ export function CourtsScreen() {
 
   return (
     <View style={styles.container}>
+      <ScreenHeader title="Courts" />
       {/* Arena selector */}
       <ScrollView
         horizontal

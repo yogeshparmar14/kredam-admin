@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { useGetBookingsQuery, useCancelBookingMutation } from '../../store/api/bookingApi';
 import { Card } from '../../components/ui/Card';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { COLORS } from '../../constants';
 import type { IBooking } from '../../types';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
@@ -90,6 +91,7 @@ export function BookingsScreen() {
 
   return (
     <View style={styles.container}>
+      <ScreenHeader title="Bookings" />
       <TextInput
         style={styles.search}
         placeholder="Search by ID or customer..."

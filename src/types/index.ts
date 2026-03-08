@@ -186,7 +186,7 @@ export interface ICalendarBlock {
 
 export interface ICalendarData {
   date: string;
-  facilityId: string;
+  arenaId: string;
   operatingHours: { open: string; close: string };
   courts: ICalendarCourt[];
   bookings: ICalendarBooking[];

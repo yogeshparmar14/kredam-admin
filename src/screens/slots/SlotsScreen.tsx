@@ -11,7 +11,9 @@ import {
   TextInput,
   Alert,
   KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useGetArenasQuery } from '../../store/api/arenaApi';
 import { useGetCalendarDataQuery, useCreateBookingMutation } from '../../store/api/bookingApi';
 import { COLORS } from '../../constants';
@@ -139,6 +141,8 @@ export function SlotsScreen() {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [paymentMode, setPaymentMode] = useState<'cash' | 'online'>('cash');
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showSportDropdown, setShowSportDropdown] = useState(false);
 
   const headerScrollRef = useRef<ScrollView>(null);
 
@@ -151,7 +155,7 @@ export function SlotsScreen() {
     isFetching,
     refetch,
   } = useGetCalendarDataQuery(
-    { facilityId: selectedArenaId, date },
+    { arenaId: selectedArenaId, date },
     { skip: !selectedArenaId },
   );
 
@@ -230,6 +234,10 @@ export function SlotsScreen() {
       Alert.alert('Error', 'Please enter customer name and phone');
       return;
     }
+    if (!/^\d{10}$/.test(customerPhone.trim())) {
+      Alert.alert('Error', 'Phone number must be exactly 10 digits');
+      return;
+    }
     try {
       for (const slot of selectedSlots) {
         await createBooking({
@@ -240,7 +248,7 @@ export function SlotsScreen() {
           endTime: slot.endTime,
           customer: { name: customerName.trim(), phone: customerPhone.trim() },
           payment: { mode: paymentMode, total: slot.price, paid: slot.price },
-          source: 'app',
+          source: 'admin',
         }).unwrap();
       }
       Alert.alert('Success', `${selectedSlots.length} booking(s) created`);
@@ -264,40 +272,112 @@ export function SlotsScreen() {
 
   return (
     <View style={styles.container}>
-      <ScreenHeader title="Slots" />
+      <ScreenHeader title={arenas.find(a => a.id === selectedArenaId)?.name ?? 'Slots'} />
       {/* Arena chips */}
       
-      {/* Date nav + Sport filter */}
+      {/* Date picker + Sport dropdown */}
       <View style={styles.filterRow}>
-        <View style={styles.dateNav}>
-          <TouchableOpacity onPress={() => setDate((d) => shiftDate(d, -1))}>
-            <Text style={styles.dateArrow}>‹</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setDate(todayStr())}>
-            <Text style={styles.dateLabel}>{formatDateLabel(date)}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setDate((d) => shiftDate(d, 1))}>
-            <Text style={styles.dateArrow}>›</Text>
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.sportChips}
+        <TouchableOpacity
+          style={styles.datePickerBtn}
+          onPress={() => setShowDatePicker(true)}
+          activeOpacity={0.7}
         >
-          {sports.map((s) => (
-            <TouchableOpacity
-              key={s.id}
-              style={[styles.chip, selectedSportId === s.id && styles.chipActive]}
-              onPress={() => setSelectedSportId(s.id)}
-            >
-              <Text style={[styles.chipText, selectedSportId === s.id && styles.chipTextActive]}>
-                {s.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+          <Text style={styles.datePickerIcon}>📅</Text>
+          <Text style={styles.dateLabel}>{formatDateLabel(date)}</Text>
+          <Text style={styles.dropdownArrow}>▾</Text>
+        </TouchableOpacity>
+
+        {showDatePicker && (
+          Platform.OS === 'android' ? (
+            <DateTimePicker
+              value={new Date(date + 'T00:00:00')}
+              mode="date"
+              display="default"
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+                if (event.type === 'set' && selectedDate) {
+                  const y = selectedDate.getFullYear();
+                  const m = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                  const d = String(selectedDate.getDate()).padStart(2, '0');
+                  setDate(`${y}-${m}-${d}`);
+                }
+              }}
+            />
+          ) : (
+            <Modal transparent animationType="slide" visible={showDatePicker}>
+              <View style={styles.datePickerOverlay}>
+                <View style={styles.datePickerContainer}>
+                  <View style={styles.datePickerHeader}>
+                    <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                      <Text style={styles.datePickerDone}>Done</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <DateTimePicker
+                    value={new Date(date + 'T00:00:00')}
+                    mode="date"
+                    display="spinner"
+                    onChange={(event, selectedDate) => {
+                      if (selectedDate) {
+                        const y = selectedDate.getFullYear();
+                        const m = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                        const d = String(selectedDate.getDate()).padStart(2, '0');
+                        setDate(`${y}-${m}-${d}`);
+                      }
+                    }}
+                  />
+                </View>
+              </View>
+            </Modal>
+          )
+        )}
+
+        <TouchableOpacity
+          style={styles.sportDropdownBtn}
+          onPress={() => setShowSportDropdown(true)}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.sportDropdownText} numberOfLines={1}>
+            {selectedSport?.name ?? 'Select Sport'}
+          </Text>
+          <Text style={styles.dropdownArrow}>▾</Text>
+        </TouchableOpacity>
+
+        <Modal transparent animationType="fade" visible={showSportDropdown}>
+          <TouchableOpacity
+            style={styles.dropdownOverlay}
+            activeOpacity={1}
+            onPress={() => setShowSportDropdown(false)}
+          >
+            <View style={styles.dropdownMenu}>
+              <Text style={styles.dropdownTitle}>Select Sport</Text>
+              {sports.map((s) => (
+                <TouchableOpacity
+                  key={s.id}
+                  style={[
+                    styles.dropdownItem,
+                    selectedSportId === s.id && styles.dropdownItemActive,
+                  ]}
+                  onPress={() => {
+                    setSelectedSportId(s.id);
+                    setShowSportDropdown(false);
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.dropdownItemText,
+                      selectedSportId === s.id && styles.dropdownItemTextActive,
+                    ]}
+                  >
+                    {s.name}
+                  </Text>
+                  {selectedSportId === s.id && (
+                    <Text style={styles.checkMark}>✓</Text>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </View>
 
       {/* Grid */}
@@ -541,10 +621,87 @@ const styles = StyleSheet.create({
     paddingVertical: hp(10),
     gap: wp(12),
   },
-  dateNav: { flexDirection: 'row', alignItems: 'center', gap: wp(8) },
-  dateArrow: { fontSize: fs(28), color: COLORS.primary, fontWeight: '700', paddingHorizontal: wp(4) },
-  dateLabel: { fontSize: fs(14), fontWeight: '700', color: COLORS.gray900, minWidth: wp(70), textAlign: 'center' },
-  sportChips: { alignItems: 'center' },
+  datePickerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.gray100,
+    borderRadius: wp(10),
+    paddingHorizontal: wp(12),
+    paddingVertical: hp(10),
+    gap: wp(6),
+  },
+  datePickerIcon: { fontSize: fs(16) },
+  dateLabel: { fontSize: fs(14), fontWeight: '700', color: COLORS.gray900 },
+  dropdownArrow: { fontSize: fs(12), color: COLORS.gray500, marginLeft: wp(2) },
+  datePickerOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
+  datePickerContainer: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: wp(16),
+    borderTopRightRadius: wp(16),
+    paddingBottom: hp(20),
+  },
+  datePickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: wp(16),
+    paddingVertical: hp(12),
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.gray200,
+  },
+  datePickerDone: { fontSize: fs(16), fontWeight: '600', color: COLORS.primary },
+  sportDropdownBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.gray100,
+    borderRadius: wp(10),
+    paddingHorizontal: wp(12),
+    paddingVertical: hp(10),
+  },
+  sportDropdownText: { fontSize: fs(14), fontWeight: '600', color: COLORS.gray900, flex: 1 },
+  dropdownOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: wp(40),
+  },
+  dropdownMenu: {
+    backgroundColor: COLORS.white,
+    borderRadius: wp(12),
+    width: '100%',
+    paddingVertical: hp(8),
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  dropdownTitle: {
+    fontSize: fs(16),
+    fontWeight: '700',
+    color: COLORS.gray900,
+    paddingHorizontal: wp(16),
+    paddingVertical: hp(10),
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.gray200,
+  },
+  dropdownItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: wp(16),
+    paddingVertical: hp(12),
+  },
+  dropdownItemActive: { backgroundColor: COLORS.primaryLight },
+  dropdownItemText: { fontSize: fs(14), color: COLORS.gray700 },
+  dropdownItemTextActive: { color: COLORS.primary, fontWeight: '600' },
+  checkMark: { fontSize: fs(16), color: COLORS.primary, fontWeight: '700' },
 
   // Grid header
   headerRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: COLORS.gray200 },
@@ -567,6 +724,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 0.5,
     borderBottomColor: COLORS.gray200,
+    marginVertical: wp(1),
   },
   timeStart: { fontSize: fs(11), fontWeight: '600', color: COLORS.gray700 },
   timeEnd: { fontSize: fs(10), color: COLORS.gray400 },

@@ -8,6 +8,7 @@ import { useGetCourtsByArenaQuery, useUpdateCourtMutation } from '../../store/ap
 import { useGetArenasQuery } from '../../store/api/arenaApi';
 import { useGetSportsByArenaQuery } from '../../store/api/sportApi';
 import { Card } from '../../components/ui/Card';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { COLORS } from '../../constants';
 import type { ICourt, IArena, ISport, ICourtPricingRule, DayType } from '../../types';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
@@ -169,6 +170,7 @@ export function PricingScreen() {
 
   return (
     <View style={styles.container}>
+      <ScreenHeader title="Pricing" />
       {/* Arena selector */}
       <ScrollView
         horizontal

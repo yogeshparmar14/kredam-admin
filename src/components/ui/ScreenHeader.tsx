@@ -34,7 +34,7 @@ export function ScreenHeader({ title, onBack }: ScreenHeaderProps) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: "flex-start",
+    alignItems: "center",
     backgroundColor: COLORS.white,
     // backgroundColor:"red",
     marginTop:hp(30),
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: fs(24),
+    fontSize: fs(20),
     fontWeight: '600',
     color: COLORS.primary,
   },

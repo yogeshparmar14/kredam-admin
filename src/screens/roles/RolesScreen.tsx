@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, Modal, TextInput, ScrollView, Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {
   useGetRolesQuery,
@@ -14,6 +15,7 @@ import { PermissionMatrix } from '../../components/shared/PermissionMatrix';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
 import type { IRole, ModulePermissions } from '../../types';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
@@ -233,6 +235,7 @@ export function RolesScreen() {
 
       {/* Create / Edit Modal */}
       <Modal visible={showForm} animationType="slide" presentationStyle="pageSheet">
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <View style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>
@@ -328,6 +331,7 @@ export function RolesScreen() {
             )}
           </ScrollView>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -338,78 +342,78 @@ export function RolesScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.gray50 },
   search: {
-    margin: 16, marginBottom: 8,
-    backgroundColor: COLORS.white, borderRadius: 10,
+    margin: wp(16), marginBottom: hp(8),
+    backgroundColor: COLORS.white, borderRadius: wp(10),
     borderWidth: 1, borderColor: COLORS.gray200,
-    paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: COLORS.gray900,
+    paddingHorizontal: wp(14), paddingVertical: hp(10),
+    fontSize: fs(14), color: COLORS.gray900,
   },
-  list: { paddingHorizontal: 16, paddingBottom: 100 },
-  empty: { alignItems: 'center', marginTop: 80 },
-  emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: COLORS.gray400, fontSize: 15 },
+  list: { paddingHorizontal: wp(16), paddingBottom: hp(100) },
+  empty: { alignItems: 'center', marginTop: hp(80) },
+  emptyIcon: { fontSize: fs(48), marginBottom: hp(12) },
+  emptyText: { color: COLORS.gray400, fontSize: fs(15) },
   fab: {
-    position: 'absolute', bottom: 24, right: 20,
-    backgroundColor: COLORS.primary, borderRadius: 28,
-    paddingHorizontal: 20, paddingVertical: 14,
-    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 8, elevation: 6,
+    position: 'absolute', bottom: hp(24), right: wp(20),
+    backgroundColor: COLORS.primary, borderRadius: wp(28),
+    paddingHorizontal: wp(20), paddingVertical: hp(14),
+    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: ms(8), elevation: ms(6),
   },
-  fabText: { color: COLORS.white, fontWeight: '700', fontSize: 15 },
+  fabText: { color: COLORS.white, fontWeight: '700', fontSize: fs(15) },
   // Card
-  cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', gap: wp(10), marginBottom: hp(8) },
   iconWrap: {
-    width: 36, height: 36, borderRadius: 10,
+    width: ms(36), height: ms(36), borderRadius: wp(10),
     backgroundColor: COLORS.primaryLight, alignItems: 'center', justifyContent: 'center',
   },
-  iconText: { fontSize: 18 },
-  roleName: { fontSize: 15, fontWeight: '700', color: COLORS.gray900 },
-  roleSlug: { fontSize: 11, color: COLORS.gray400, marginTop: 1 },
-  badges: { flexDirection: 'row', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end' },
-  systemBadge: { backgroundColor: '#2563eb15', borderRadius: 5, paddingHorizontal: 6, paddingVertical: 2 },
-  systemBadgeText: { fontSize: 10, fontWeight: '600', color: COLORS.primary },
-  statusBadge: { borderRadius: 5, paddingHorizontal: 6, paddingVertical: 2 },
-  statusText: { fontSize: 10, fontWeight: '600' },
-  description: { fontSize: 12, color: COLORS.gray500, marginBottom: 8 },
-  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 },
-  moduleCount: { fontSize: 11, color: COLORS.gray400 },
-  actions: { flexDirection: 'row', gap: 6 },
+  iconText: { fontSize: fs(18) },
+  roleName: { fontSize: fs(15), fontWeight: '700', color: COLORS.gray900 },
+  roleSlug: { fontSize: fs(11), color: COLORS.gray400, marginTop: hp(1) },
+  badges: { flexDirection: 'row', gap: wp(4), flexWrap: 'wrap', justifyContent: 'flex-end' },
+  systemBadge: { backgroundColor: '#2563eb15', borderRadius: wp(5), paddingHorizontal: wp(6), paddingVertical: hp(2) },
+  systemBadgeText: { fontSize: fs(10), fontWeight: '600', color: COLORS.primary },
+  statusBadge: { borderRadius: wp(5), paddingHorizontal: wp(6), paddingVertical: hp(2) },
+  statusText: { fontSize: fs(10), fontWeight: '600' },
+  description: { fontSize: fs(12), color: COLORS.gray500, marginBottom: hp(8) },
+  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: hp(4) },
+  moduleCount: { fontSize: fs(11), color: COLORS.gray400 },
+  actions: { flexDirection: 'row', gap: wp(6) },
   editBtn: {
-    paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6,
+    paddingHorizontal: wp(10), paddingVertical: hp(4), borderRadius: wp(6),
     backgroundColor: COLORS.primaryLight, borderWidth: 1, borderColor: COLORS.primary,
   },
-  editBtnText: { fontSize: 12, fontWeight: '600', color: COLORS.primary },
+  editBtnText: { fontSize: fs(12), fontWeight: '600', color: COLORS.primary },
   deleteBtn: {
-    paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6,
+    paddingHorizontal: wp(10), paddingVertical: hp(4), borderRadius: wp(6),
     backgroundColor: '#dc262615', borderWidth: 1, borderColor: '#dc262640',
   },
-  deleteBtnText: { fontSize: 12, fontWeight: '600', color: COLORS.danger },
+  deleteBtnText: { fontSize: fs(12), fontWeight: '600', color: COLORS.danger },
   // Modal
   modal: { flex: 1, backgroundColor: COLORS.white },
   modalHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    padding: 20, borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
+    padding: wp(20), borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
   },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: COLORS.gray900 },
-  modalClose: { fontSize: 20, color: COLORS.gray500, padding: 4 },
-  modalBody: { padding: 20 },
+  modalTitle: { fontSize: fs(18), fontWeight: '700', color: COLORS.gray900 },
+  modalClose: { fontSize: fs(20), color: COLORS.gray500, padding: wp(4) },
+  modalBody: { padding: wp(20) },
   readonlyBanner: {
-    backgroundColor: '#2563eb10', borderRadius: 10, padding: 12,
-    borderWidth: 1, borderColor: '#2563eb20', marginBottom: 8,
+    backgroundColor: '#2563eb10', borderRadius: wp(10), padding: wp(12),
+    borderWidth: 1, borderColor: '#2563eb20', marginBottom: hp(8),
   },
-  readonlyText: { fontSize: 12, color: COLORS.primary, lineHeight: 18 },
-  fieldLabel: { fontSize: 13, fontWeight: '600', color: COLORS.gray700, marginTop: 16, marginBottom: 6 },
+  readonlyText: { fontSize: fs(12), color: COLORS.primary, lineHeight: 18 },
+  fieldLabel: { fontSize: fs(13), fontWeight: '600', color: COLORS.gray700, marginTop: hp(16), marginBottom: hp(6) },
   input: {
-    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: 10,
-    paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: COLORS.gray900, backgroundColor: COLORS.white,
+    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: wp(10),
+    paddingHorizontal: wp(14), paddingVertical: hp(10),
+    fontSize: fs(14), color: COLORS.gray900, backgroundColor: COLORS.white,
   },
   inputReadonly: { backgroundColor: COLORS.gray100, color: COLORS.gray500 },
-  textarea: { height: 60, textAlignVertical: 'top' },
-  loadingModules: { fontSize: 13, color: COLORS.gray400, paddingVertical: 10 },
+  textarea: { height: hp(60), textAlignVertical: 'top' },
+  loadingModules: { fontSize: fs(13), color: COLORS.gray400, paddingVertical: hp(10) },
   submitBtn: {
-    marginTop: 28, marginBottom: 40, backgroundColor: COLORS.primary,
-    borderRadius: 12, paddingVertical: 14, alignItems: 'center',
+    marginTop: hp(28), marginBottom: hp(40), backgroundColor: COLORS.primary,
+    borderRadius: wp(12), paddingVertical: hp(14), alignItems: 'center',
   },
   submitBtnDisabled: { opacity: 0.6 },
-  submitBtnText: { color: COLORS.white, fontSize: 16, fontWeight: '700' },
+  submitBtnText: { color: COLORS.white, fontSize: fs(16), fontWeight: '700' },
 });

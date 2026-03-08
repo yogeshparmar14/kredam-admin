@@ -10,6 +10,7 @@ import {
   Modal,
   TextInput,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useGetArenasQuery } from '../../store/api/arenaApi';
 import { useGetCalendarDataQuery, useCreateBookingMutation } from '../../store/api/bookingApi';
@@ -22,11 +23,12 @@ import type {
   ICourtPricingRule,
   ISelectedSlot,
 } from '../../types';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
-const TIME_COL_WIDTH = 72;
-const CELL_WIDTH = 108;
-const ROW_HEIGHT = 50;
-const HEADER_HEIGHT = 52;
+const TIME_COL_WIDTH = wp(72);
+const CELL_WIDTH = wp(108);
+const ROW_HEIGHT = hp(50);
+const HEADER_HEIGHT = hp(52);
 
 function todayStr() {
   const d = new Date();
@@ -441,6 +443,7 @@ export function SlotsScreen() {
 
       {/* Booking Modal */}
       <Modal visible={bookModalVisible} animationType="slide" transparent>
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Confirm Booking</Text>
@@ -520,42 +523,43 @@ export function SlotsScreen() {
             </View>
           </View>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.white, paddingTop: 50 },
+  container: { flex: 1, backgroundColor: COLORS.white, paddingTop: hp(50) },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 
   // Arena bar
-  arenaBar: { maxHeight: 48 },
-  arenaBarContent: { paddingHorizontal: 12, gap: 8, alignItems: 'center' },
+  arenaBar: { maxHeight: hp(48) },
+  arenaBarContent: { paddingHorizontal: wp(12), gap: wp(8), alignItems: 'center' },
 
   // Chips
   chip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: wp(16),
+    paddingVertical: hp(8),
+    borderRadius: wp(20),
     backgroundColor: COLORS.gray100,
-    marginRight: 8,
+    marginRight: wp(8),
   },
   chipActive: { backgroundColor: COLORS.primary },
-  chipText: { fontSize: 13, fontWeight: '600', color: COLORS.gray600 },
+  chipText: { fontSize: fs(13), fontWeight: '600', color: COLORS.gray600 },
   chipTextActive: { color: COLORS.white },
 
   // Filter row
   filterRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    gap: 12,
+    paddingHorizontal: wp(12),
+    paddingVertical: hp(10),
+    gap: wp(12),
   },
-  dateNav: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  dateArrow: { fontSize: 28, color: COLORS.primary, fontWeight: '700', paddingHorizontal: 4 },
-  dateLabel: { fontSize: 14, fontWeight: '700', color: COLORS.gray900, minWidth: 70, textAlign: 'center' },
+  dateNav: { flexDirection: 'row', alignItems: 'center', gap: wp(8) },
+  dateArrow: { fontSize: fs(28), color: COLORS.primary, fontWeight: '700', paddingHorizontal: wp(4) },
+  dateLabel: { fontSize: fs(14), fontWeight: '700', color: COLORS.gray900, minWidth: wp(70), textAlign: 'center' },
   sportChips: { alignItems: 'center' },
 
   // Grid header
@@ -567,9 +571,9 @@ const styles = StyleSheet.create({
     height: HEADER_HEIGHT,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: wp(4),
   },
-  headerCellText: { fontSize: 12, fontWeight: '600', color: COLORS.gray700, textAlign: 'center' },
+  headerCellText: { fontSize: fs(12), fontWeight: '600', color: COLORS.gray700, textAlign: 'center' },
 
   // Time column
   timeCol: { width: TIME_COL_WIDTH },
@@ -580,8 +584,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: COLORS.gray200,
   },
-  timeStart: { fontSize: 11, fontWeight: '600', color: COLORS.gray700 },
-  timeEnd: { fontSize: 10, color: COLORS.gray400 },
+  timeStart: { fontSize: fs(11), fontWeight: '600', color: COLORS.gray700 },
+  timeEnd: { fontSize: fs(10), color: COLORS.gray400 },
 
   // Grid
   gridRow: { flexDirection: 'row' },
@@ -592,31 +596,31 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 0.5,
     borderColor: COLORS.gray200,
-    margin: 1,
-    borderRadius: 6,
+    margin: wp(1),
+    borderRadius: wp(6),
   },
   cellAvailable: { backgroundColor: COLORS.gray100 },
   cellBooked: { backgroundColor: COLORS.primary },
   cellBlocked: { backgroundColor: COLORS.gray400 },
   cellSelected: { backgroundColor: COLORS.primaryLight, borderColor: COLORS.primary, borderWidth: 2 },
-  cellPrice: { fontSize: 13, fontWeight: '700', color: COLORS.gray700 },
+  cellPrice: { fontSize: fs(13), fontWeight: '700', color: COLORS.gray700 },
   cellPriceLight: { color: COLORS.white },
-  emptyText: { fontSize: 14, color: COLORS.gray500 },
+  emptyText: { fontSize: fs(14), color: COLORS.gray500 },
 
   // Cart bar
   cartBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: wp(16),
+    paddingVertical: hp(12),
     backgroundColor: COLORS.white,
     borderTopWidth: 1,
     borderTopColor: COLORS.gray200,
   },
-  cartText: { fontSize: 15, fontWeight: '700', color: COLORS.gray900 },
-  bookBtn: { backgroundColor: COLORS.primary, borderRadius: 10, paddingHorizontal: 24, paddingVertical: 10 },
-  bookBtnText: { color: COLORS.white, fontSize: 15, fontWeight: '700' },
+  cartText: { fontSize: fs(15), fontWeight: '700', color: COLORS.gray900 },
+  bookBtn: { backgroundColor: COLORS.primary, borderRadius: wp(10), paddingHorizontal: wp(24), paddingVertical: hp(10) },
+  bookBtnText: { color: COLORS.white, fontSize: fs(15), fontWeight: '700' },
 
   // Modal
   modalOverlay: {
@@ -626,70 +630,70 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: COLORS.white,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
+    borderTopLeftRadius: wp(20),
+    borderTopRightRadius: wp(20),
+    padding: wp(20),
     maxHeight: '80%',
   },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: COLORS.gray900, marginBottom: 12 },
-  slotSummary: { maxHeight: 160, marginBottom: 12 },
+  modalTitle: { fontSize: fs(18), fontWeight: '700', color: COLORS.gray900, marginBottom: hp(12) },
+  slotSummary: { maxHeight: hp(160), marginBottom: hp(12) },
   slotRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
+    paddingVertical: hp(6),
     borderBottomWidth: 0.5,
     borderBottomColor: COLORS.gray200,
   },
-  slotCourtName: { flex: 1, fontSize: 13, fontWeight: '600', color: COLORS.gray900 },
-  slotTime: { fontSize: 12, color: COLORS.gray500, marginRight: 12 },
-  slotPrice: { fontSize: 13, fontWeight: '700', color: COLORS.gray900 },
+  slotCourtName: { flex: 1, fontSize: fs(13), fontWeight: '600', color: COLORS.gray900 },
+  slotTime: { fontSize: fs(12), color: COLORS.gray500, marginRight: wp(12) },
+  slotPrice: { fontSize: fs(13), fontWeight: '700', color: COLORS.gray900 },
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 10,
+    paddingVertical: hp(10),
     borderTopWidth: 1,
     borderTopColor: COLORS.gray200,
-    marginBottom: 12,
+    marginBottom: hp(12),
   },
-  totalLabel: { fontSize: 15, fontWeight: '700', color: COLORS.gray900 },
-  totalValue: { fontSize: 15, fontWeight: '700', color: COLORS.primary },
+  totalLabel: { fontSize: fs(15), fontWeight: '700', color: COLORS.gray900 },
+  totalValue: { fontSize: fs(15), fontWeight: '700', color: COLORS.primary },
   input: {
     borderWidth: 1,
     borderColor: COLORS.gray200,
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 14,
+    borderRadius: wp(10),
+    padding: wp(12),
+    fontSize: fs(14),
     color: COLORS.gray900,
-    marginBottom: 10,
+    marginBottom: hp(10),
   },
-  paymentRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
+  paymentRow: { flexDirection: 'row', gap: wp(10), marginBottom: hp(16) },
   paymentChip: {
     flex: 1,
-    paddingVertical: 10,
-    borderRadius: 10,
+    paddingVertical: hp(10),
+    borderRadius: wp(10),
     borderWidth: 1,
     borderColor: COLORS.gray200,
     alignItems: 'center',
   },
   paymentChipActive: { borderColor: COLORS.primary, backgroundColor: COLORS.primaryLight },
-  paymentChipText: { fontSize: 14, fontWeight: '600', color: COLORS.gray500 },
+  paymentChipText: { fontSize: fs(14), fontWeight: '600', color: COLORS.gray500 },
   paymentChipTextActive: { color: COLORS.primary },
-  modalActions: { flexDirection: 'row', gap: 12 },
+  modalActions: { flexDirection: 'row', gap: wp(12) },
   cancelBtn: {
     flex: 1,
-    paddingVertical: 14,
-    borderRadius: 12,
+    paddingVertical: hp(14),
+    borderRadius: wp(12),
     borderWidth: 1,
     borderColor: COLORS.gray200,
     alignItems: 'center',
   },
-  cancelBtnText: { fontSize: 15, fontWeight: '600', color: COLORS.gray600 },
+  cancelBtnText: { fontSize: fs(15), fontWeight: '600', color: COLORS.gray600 },
   confirmBtn: {
     flex: 1,
-    paddingVertical: 14,
-    borderRadius: 12,
+    paddingVertical: hp(14),
+    borderRadius: wp(12),
     backgroundColor: COLORS.primary,
     alignItems: 'center',
   },
-  confirmBtnText: { color: COLORS.white, fontSize: 15, fontWeight: '700' },
+  confirmBtnText: { color: COLORS.white, fontSize: fs(15), fontWeight: '700' },
 });

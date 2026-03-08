@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { COLORS } from '../../constants';
 import type { ModulePermissions } from '../../types';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 interface PermissionMatrixProps {
   modules: string[];
@@ -137,30 +138,30 @@ export function PermissionMatrix({ modules, permissions, onChange, disabled = fa
 }
 
 const styles = StyleSheet.create({
-  container: { maxHeight: 360, borderRadius: 10, borderWidth: 1, borderColor: COLORS.gray200 },
+  container: { maxHeight: hp(360), borderRadius: wp(10), borderWidth: 1, borderColor: COLORS.gray200 },
   headerRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 12, paddingVertical: 10,
+    paddingHorizontal: wp(12), paddingVertical: hp(10),
     backgroundColor: COLORS.gray100, borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
   },
-  moduleHeader: { fontSize: 11, fontWeight: '700', color: COLORS.gray500, textTransform: 'uppercase', flex: 1 },
+  moduleHeader: { fontSize: fs(11), fontWeight: '700', color: COLORS.gray500, textTransform: 'uppercase', flex: 1 },
   moduleRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 12, paddingVertical: 10,
+    paddingHorizontal: wp(12), paddingVertical: hp(10),
     borderBottomWidth: 1, borderBottomColor: COLORS.gray100,
   },
   moduleRowAlt: { backgroundColor: COLORS.white },
-  moduleName: { fontSize: 13, fontWeight: '500', color: COLORS.gray700, flex: 1 },
-  actionsRow: { flexDirection: 'row', gap: 4 },
-  actionCol: { width: 52, alignItems: 'center', gap: 4 },
-  actionHeader: { fontSize: 10, fontWeight: '700', color: COLORS.gray500, textTransform: 'uppercase' },
+  moduleName: { fontSize: fs(13), fontWeight: '500', color: COLORS.gray700, flex: 1 },
+  actionsRow: { flexDirection: 'row', gap: wp(4) },
+  actionCol: { width: wp(52), alignItems: 'center', gap: wp(4) },
+  actionHeader: { fontSize: fs(10), fontWeight: '700', color: COLORS.gray500, textTransform: 'uppercase' },
   checkbox: {
-    width: 22, height: 22, borderRadius: 5,
+    width: ms(22), height: ms(22), borderRadius: wp(5),
     borderWidth: 1.5, borderColor: COLORS.gray400,
     backgroundColor: COLORS.white,
     alignItems: 'center', justifyContent: 'center',
   },
   checkboxChecked: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
   checkboxDisabled: { opacity: 0.5 },
-  checkmark: { color: COLORS.white, fontSize: 13, fontWeight: '700', lineHeight: 16 },
+  checkmark: { color: COLORS.white, fontSize: fs(13), fontWeight: '700', lineHeight: 16 },
 });

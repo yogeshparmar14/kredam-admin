@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, TextInput, Alert, Modal, ScrollView,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useGetBookingsQuery, useCancelBookingMutation } from '../../store/api/bookingApi';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
 import type { IBooking } from '../../types';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 const STATUS_COLORS: Record<string, string> = {
   confirmed: '#16a34a',
@@ -127,6 +129,7 @@ export function BookingsScreen() {
 
       {/* Cancel modal */}
       <Modal visible={!!cancelTarget} animationType="slide" transparent>
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <View style={styles.modalOverlay}>
           <View style={styles.cancelModal}>
             <Text style={styles.cancelModalTitle}>Cancel Booking</Text>
@@ -162,6 +165,7 @@ export function BookingsScreen() {
             </View>
           </View>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -170,63 +174,63 @@ export function BookingsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.gray50 },
   search: {
-    margin: 16, marginBottom: 8,
-    backgroundColor: COLORS.white, borderRadius: 10,
+    margin: wp(16), marginBottom: hp(8),
+    backgroundColor: COLORS.white, borderRadius: wp(10),
     borderWidth: 1, borderColor: COLORS.gray200,
-    paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: COLORS.gray900,
+    paddingHorizontal: wp(14), paddingVertical: hp(10),
+    fontSize: fs(14), color: COLORS.gray900,
   },
-  chipsScroll: { maxHeight: 48 },
-  chips: { paddingHorizontal: 16, gap: 8, marginBottom: 8 },
+  chipsScroll: { maxHeight: hp(48) },
+  chips: { paddingHorizontal: wp(16), gap: wp(8), marginBottom: hp(8) },
   chip: {
-    paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20,
+    paddingHorizontal: wp(12), paddingVertical: hp(6), borderRadius: wp(20),
     backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.gray200,
   },
   chipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  chipText: { fontSize: 12, color: COLORS.gray600 } as never,
+  chipText: { fontSize: fs(12), color: COLORS.gray600 } as never,
   chipTextActive: { color: COLORS.white },
-  list: { paddingHorizontal: 16, paddingBottom: 20 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  bookingId: { fontSize: 14, fontWeight: '700', color: COLORS.gray900 },
-  statusBadge: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
-  statusText: { fontSize: 11, fontWeight: '600' },
-  courtName: { fontSize: 13, color: COLORS.gray700, marginBottom: 8 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 },
-  detail: { fontSize: 12, color: COLORS.gray500 },
-  customerName: { fontSize: 13, color: COLORS.gray700 },
-  amount: { fontSize: 14, fontWeight: '700', color: COLORS.gray900 },
+  list: { paddingHorizontal: wp(16), paddingBottom: hp(20) },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: hp(6) },
+  bookingId: { fontSize: fs(14), fontWeight: '700', color: COLORS.gray900 },
+  statusBadge: { borderRadius: wp(6), paddingHorizontal: wp(8), paddingVertical: hp(3) },
+  statusText: { fontSize: fs(11), fontWeight: '600' },
+  courtName: { fontSize: fs(13), color: COLORS.gray700, marginBottom: hp(8) },
+  row: { flexDirection: 'row', justifyContent: 'space-between', marginTop: hp(4) },
+  detail: { fontSize: fs(12), color: COLORS.gray500 },
+  customerName: { fontSize: fs(13), color: COLORS.gray700 },
+  amount: { fontSize: fs(14), fontWeight: '700', color: COLORS.gray900 },
   cancelBtn: {
-    marginTop: 10, paddingVertical: 7, borderRadius: 8,
+    marginTop: hp(10), paddingVertical: hp(7), borderRadius: wp(8),
     borderWidth: 1, borderColor: '#dc262640', backgroundColor: '#dc262608',
     alignItems: 'center',
   },
-  cancelBtnText: { fontSize: 12, fontWeight: '600', color: COLORS.danger },
-  empty: { alignItems: 'center', marginTop: 60 },
-  emptyText: { color: COLORS.gray400, fontSize: 15 },
+  cancelBtnText: { fontSize: fs(12), fontWeight: '600', color: COLORS.danger },
+  empty: { alignItems: 'center', marginTop: hp(60) },
+  emptyText: { color: COLORS.gray400, fontSize: fs(15) },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
   cancelModal: {
-    backgroundColor: COLORS.white, borderTopLeftRadius: 20, borderTopRightRadius: 20,
-    padding: 24, paddingBottom: 40,
+    backgroundColor: COLORS.white, borderTopLeftRadius: wp(20), borderTopRightRadius: wp(20),
+    padding: wp(24), paddingBottom: hp(40),
   },
-  cancelModalTitle: { fontSize: 18, fontWeight: '700', color: COLORS.gray900, marginBottom: 4 },
-  cancelModalSub: { fontSize: 13, color: COLORS.gray500, marginBottom: 16 },
-  fieldLabel: { fontSize: 13, fontWeight: '600', color: COLORS.gray700, marginBottom: 6 },
+  cancelModalTitle: { fontSize: fs(18), fontWeight: '700', color: COLORS.gray900, marginBottom: hp(4) },
+  cancelModalSub: { fontSize: fs(13), color: COLORS.gray500, marginBottom: hp(16) },
+  fieldLabel: { fontSize: fs(13), fontWeight: '600', color: COLORS.gray700, marginBottom: hp(6) },
   input: {
-    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: 10,
-    paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: COLORS.gray900, backgroundColor: COLORS.white,
+    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: wp(10),
+    paddingHorizontal: wp(14), paddingVertical: hp(10),
+    fontSize: fs(14), color: COLORS.gray900, backgroundColor: COLORS.white,
   },
-  textarea: { height: 72, textAlignVertical: 'top' },
-  cancelModalBtns: { flexDirection: 'row', gap: 10, marginTop: 20 },
+  textarea: { height: hp(72), textAlignVertical: 'top' },
+  cancelModalBtns: { flexDirection: 'row', gap: wp(10), marginTop: hp(20) },
   keepBtn: {
-    flex: 1, paddingVertical: 12, borderRadius: 10,
+    flex: 1, paddingVertical: hp(12), borderRadius: wp(10),
     borderWidth: 1, borderColor: COLORS.gray400, alignItems: 'center',
   },
-  keepBtnText: { fontSize: 14, fontWeight: '600', color: COLORS.gray700 },
+  keepBtnText: { fontSize: fs(14), fontWeight: '600', color: COLORS.gray700 },
   confirmCancelBtn: {
-    flex: 2, paddingVertical: 12, borderRadius: 10,
+    flex: 2, paddingVertical: hp(12), borderRadius: wp(10),
     backgroundColor: COLORS.danger, alignItems: 'center',
   },
-  confirmCancelBtnText: { fontSize: 14, fontWeight: '700', color: COLORS.white },
+  confirmCancelBtnText: { fontSize: fs(14), fontWeight: '700', color: COLORS.white },
   btnDisabled: { opacity: 0.6 },
 });

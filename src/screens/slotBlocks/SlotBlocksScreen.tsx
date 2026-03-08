@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, Modal, TextInput, ScrollView, Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {
   useGetSlotBlocksQuery,
@@ -14,6 +15,7 @@ import { useGetSportsByArenaQuery } from '../../store/api/sportApi';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
 import type { ISlotBlock } from '../../types';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -177,6 +179,7 @@ export function SlotBlocksScreen() {
 
       {/* Create Modal */}
       <Modal visible={showCreate} animationType="slide" presentationStyle="pageSheet">
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <View style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Block Slots</Text>
@@ -220,7 +223,7 @@ export function SlotBlocksScreen() {
                   placeholderTextColor={COLORS.gray400}
                 />
               </View>
-              <View style={{ width: 12 }} />
+              <View style={{ width: wp(12) }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.fieldLabel}>End Time</Text>
                 <TextInput
@@ -307,6 +310,7 @@ export function SlotBlocksScreen() {
             </TouchableOpacity>
           </ScrollView>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -316,83 +320,83 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.gray50 },
   datebar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    paddingVertical: 12, backgroundColor: COLORS.white,
+    paddingVertical: hp(12), backgroundColor: COLORS.white,
     borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
   },
-  dateText: { fontSize: 16, fontWeight: '600', color: COLORS.gray900, marginHorizontal: 20 },
-  arrow: { fontSize: 28, color: COLORS.primary, paddingHorizontal: 16 },
-  chips: { flexDirection: 'row', paddingHorizontal: 16, gap: 8, paddingVertical: 10 },
+  dateText: { fontSize: fs(16), fontWeight: '600', color: COLORS.gray900, marginHorizontal: wp(20) },
+  arrow: { fontSize: fs(28), color: COLORS.primary, paddingHorizontal: wp(16) },
+  chips: { flexDirection: 'row', paddingHorizontal: wp(16), gap: wp(8), paddingVertical: hp(10) },
   chip: {
-    paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20,
+    paddingHorizontal: wp(14), paddingVertical: hp(6), borderRadius: wp(20),
     backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.gray200,
   },
   chipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  chipText: { fontSize: 13, color: COLORS.gray600 } as never,
+  chipText: { fontSize: fs(13), color: COLORS.gray600 } as never,
   chipTextActive: { color: COLORS.white },
-  list: { paddingHorizontal: 16, paddingBottom: 100 },
-  empty: { alignItems: 'center', marginTop: 80 },
-  emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: COLORS.gray400, fontSize: 15 },
+  list: { paddingHorizontal: wp(16), paddingBottom: hp(100) },
+  empty: { alignItems: 'center', marginTop: hp(80) },
+  emptyIcon: { fontSize: fs(48), marginBottom: hp(12) },
+  emptyText: { color: COLORS.gray400, fontSize: fs(15) },
   fab: {
-    position: 'absolute', bottom: 24, right: 20,
-    backgroundColor: COLORS.primary, borderRadius: 28,
-    paddingHorizontal: 20, paddingVertical: 14,
-    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 8, elevation: 6,
+    position: 'absolute', bottom: hp(24), right: wp(20),
+    backgroundColor: COLORS.primary, borderRadius: wp(28),
+    paddingHorizontal: wp(20), paddingVertical: hp(14),
+    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: ms(8), elevation: ms(6),
   },
-  fabText: { color: COLORS.white, fontWeight: '700', fontSize: 15 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  badge: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
+  fabText: { color: COLORS.white, fontWeight: '700', fontSize: fs(15) },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: hp(8) },
+  badge: { borderRadius: wp(6), paddingHorizontal: wp(8), paddingVertical: hp(3) },
   badgeActive: { backgroundColor: '#dc262620' },
   badgeReleased: { backgroundColor: '#16a34a20' },
-  badgeText: { fontSize: 11, fontWeight: '600' },
+  badgeText: { fontSize: fs(11), fontWeight: '600' },
   badgeTextActive: { color: COLORS.danger },
   badgeTextReleased: { color: COLORS.success },
   releaseBtn: {
-    borderRadius: 6, paddingHorizontal: 10, paddingVertical: 4,
+    borderRadius: wp(6), paddingHorizontal: wp(10), paddingVertical: hp(4),
     backgroundColor: '#d9770620', borderWidth: 1, borderColor: COLORS.warning,
   },
-  releaseBtnText: { fontSize: 12, fontWeight: '600', color: COLORS.warning },
-  blockDate: { fontSize: 13, color: COLORS.gray700, marginBottom: 2 },
-  blockTime: { fontSize: 13, color: COLORS.gray700, marginBottom: 2 },
-  blockMeta: { fontSize: 12, color: COLORS.gray500, marginBottom: 2 },
-  blockReason: { fontSize: 12, color: COLORS.gray500, marginTop: 4 },
+  releaseBtnText: { fontSize: fs(12), fontWeight: '600', color: COLORS.warning },
+  blockDate: { fontSize: fs(13), color: COLORS.gray700, marginBottom: hp(2) },
+  blockTime: { fontSize: fs(13), color: COLORS.gray700, marginBottom: hp(2) },
+  blockMeta: { fontSize: fs(12), color: COLORS.gray500, marginBottom: hp(2) },
+  blockReason: { fontSize: fs(12), color: COLORS.gray500, marginTop: hp(4) },
   modal: { flex: 1, backgroundColor: COLORS.white },
   modalHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    padding: 20, borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
+    padding: wp(20), borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
   },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: COLORS.gray900 },
-  modalClose: { fontSize: 20, color: COLORS.gray500, padding: 4 },
-  modalBody: { padding: 20 },
-  fieldLabel: { fontSize: 13, fontWeight: '600', color: COLORS.gray700, marginTop: 16, marginBottom: 6 },
+  modalTitle: { fontSize: fs(18), fontWeight: '700', color: COLORS.gray900 },
+  modalClose: { fontSize: fs(20), color: COLORS.gray500, padding: wp(4) },
+  modalBody: { padding: wp(20) },
+  fieldLabel: { fontSize: fs(13), fontWeight: '600', color: COLORS.gray700, marginTop: hp(16), marginBottom: hp(6) },
   input: {
-    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: 10,
-    paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: COLORS.gray900, backgroundColor: COLORS.white,
+    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: wp(10),
+    paddingHorizontal: wp(14), paddingVertical: hp(10),
+    fontSize: fs(14), color: COLORS.gray900, backgroundColor: COLORS.white,
   },
-  textarea: { height: 80, textAlignVertical: 'top' },
+  textarea: { height: hp(80), textAlignVertical: 'top' },
   twoCol: { flexDirection: 'row' },
-  pickerRow: { marginBottom: 4 },
+  pickerRow: { marginBottom: hp(4) },
   pickerChip: {
-    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, marginRight: 8,
+    paddingHorizontal: wp(14), paddingVertical: hp(8), borderRadius: wp(20), marginRight: wp(8),
     backgroundColor: COLORS.gray100, borderWidth: 1, borderColor: COLORS.gray200,
   },
   pickerChipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  pickerChipText: { fontSize: 13, color: COLORS.gray700 },
+  pickerChipText: { fontSize: fs(13), color: COLORS.gray700 },
   pickerChipTextActive: { color: COLORS.white },
-  pickerEmpty: { fontSize: 13, color: COLORS.gray400, paddingVertical: 8 },
-  modeRow: { flexDirection: 'row', gap: 10 },
+  pickerEmpty: { fontSize: fs(13), color: COLORS.gray400, paddingVertical: hp(8) },
+  modeRow: { flexDirection: 'row', gap: wp(10) },
   modeBtn: {
-    flex: 1, paddingVertical: 10, borderRadius: 10, alignItems: 'center',
+    flex: 1, paddingVertical: hp(10), borderRadius: wp(10), alignItems: 'center',
     borderWidth: 1, borderColor: COLORS.gray200, backgroundColor: COLORS.white,
   },
   modeBtnActive: { borderColor: COLORS.primary, backgroundColor: COLORS.primaryLight },
-  modeBtnText: { fontSize: 13, fontWeight: '600', color: COLORS.gray600 } as never,
+  modeBtnText: { fontSize: fs(13), fontWeight: '600', color: COLORS.gray600 } as never,
   modeBtnTextActive: { color: COLORS.primary },
   submitBtn: {
-    marginTop: 28, marginBottom: 40, backgroundColor: COLORS.primary,
-    borderRadius: 12, paddingVertical: 14, alignItems: 'center',
+    marginTop: hp(28), marginBottom: hp(40), backgroundColor: COLORS.primary,
+    borderRadius: wp(12), paddingVertical: hp(14), alignItems: 'center',
   },
   submitBtnDisabled: { opacity: 0.6 },
-  submitBtnText: { color: COLORS.white, fontSize: 16, fontWeight: '700' },
+  submitBtnText: { color: COLORS.white, fontSize: fs(16), fontWeight: '700' },
 });

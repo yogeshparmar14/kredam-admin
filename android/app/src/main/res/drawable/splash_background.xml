@@ -3,8 +3,8 @@
     <item android:drawable="@android:color/white" />
     <item
         android:gravity="center"
-        android:width="200dp"
-        android:height="200dp">
+        android:width="300dp"
+        android:height="300dp">
         <bitmap
             android:gravity="center"
             android:src="@mipmap/splash_logo" />

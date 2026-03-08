@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, TextInput, Modal, ScrollView, Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useGetUsersQuery, useCreateUserMutation, useUpdateUserMutation } from '../../store/api/userApi';
 import { useGetRolesQuery } from '../../store/api/roleApi';
@@ -9,6 +10,7 @@ import { useGetArenasQuery } from '../../store/api/arenaApi';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
 import type { IUser, IArena } from '../../types';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 const emptyForm = () => ({
   name: '', email: '', phone: '', password: '', role: 'manager', arena: '',
@@ -173,6 +175,7 @@ export function UsersScreen() {
       </TouchableOpacity>
 
       <Modal visible={showForm} animationType="slide" presentationStyle="pageSheet">
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <View style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>{editUser ? 'Edit User' : 'New User'}</Text>
@@ -246,6 +249,7 @@ export function UsersScreen() {
             </TouchableOpacity>
           </ScrollView>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -254,71 +258,71 @@ export function UsersScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.gray50 },
   search: {
-    margin: 16, marginBottom: 8,
-    backgroundColor: COLORS.white, borderRadius: 10,
+    margin: wp(16), marginBottom: hp(8),
+    backgroundColor: COLORS.white, borderRadius: wp(10),
     borderWidth: 1, borderColor: COLORS.gray200,
-    paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: COLORS.gray900,
+    paddingHorizontal: wp(14), paddingVertical: hp(10),
+    fontSize: fs(14), color: COLORS.gray900,
   },
-  list: { paddingHorizontal: 16, paddingBottom: 100 },
-  empty: { alignItems: 'center', marginTop: 80 },
-  emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: COLORS.gray400, fontSize: 15 },
+  list: { paddingHorizontal: wp(16), paddingBottom: hp(100) },
+  empty: { alignItems: 'center', marginTop: hp(80) },
+  emptyIcon: { fontSize: fs(48), marginBottom: hp(12) },
+  emptyText: { color: COLORS.gray400, fontSize: fs(15) },
   fab: {
-    position: 'absolute', bottom: 24, right: 20,
-    backgroundColor: COLORS.primary, borderRadius: 28,
-    paddingHorizontal: 20, paddingVertical: 14,
-    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 8, elevation: 6,
+    position: 'absolute', bottom: hp(24), right: wp(20),
+    backgroundColor: COLORS.primary, borderRadius: wp(28),
+    paddingHorizontal: wp(20), paddingVertical: hp(14),
+    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: ms(8), elevation: ms(6),
   },
-  fabText: { color: COLORS.white, fontWeight: '700', fontSize: 15 },
-  cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+  fabText: { color: COLORS.white, fontWeight: '700', fontSize: fs(15) },
+  cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: wp(12) },
   avatar: {
-    width: 40, height: 40, borderRadius: 20,
+    width: ms(40), height: ms(40), borderRadius: wp(20),
     backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center',
   },
-  avatarText: { color: COLORS.white, fontSize: 16, fontWeight: '700' },
-  userName: { fontSize: 15, fontWeight: '700', color: COLORS.gray900 },
-  userEmail: { fontSize: 12, color: COLORS.gray500, marginTop: 1 },
-  userPhone: { fontSize: 12, color: COLORS.gray500 },
-  badgeRow: { flexDirection: 'row', gap: 6, marginTop: 6, flexWrap: 'wrap' },
-  roleBadge: { backgroundColor: COLORS.primaryLight, borderRadius: 5, paddingHorizontal: 6, paddingVertical: 2 },
-  roleBadgeText: { fontSize: 10, fontWeight: '600', color: COLORS.primary },
-  statusBadge: { borderRadius: 5, paddingHorizontal: 6, paddingVertical: 2 },
-  statusBadgeText: { fontSize: 10, fontWeight: '600' },
-  actions: { gap: 6, alignItems: 'flex-end' },
+  avatarText: { color: COLORS.white, fontSize: fs(16), fontWeight: '700' },
+  userName: { fontSize: fs(15), fontWeight: '700', color: COLORS.gray900 },
+  userEmail: { fontSize: fs(12), color: COLORS.gray500, marginTop: hp(1) },
+  userPhone: { fontSize: fs(12), color: COLORS.gray500 },
+  badgeRow: { flexDirection: 'row', gap: wp(6), marginTop: hp(6), flexWrap: 'wrap' },
+  roleBadge: { backgroundColor: COLORS.primaryLight, borderRadius: wp(5), paddingHorizontal: wp(6), paddingVertical: hp(2) },
+  roleBadgeText: { fontSize: fs(10), fontWeight: '600', color: COLORS.primary },
+  statusBadge: { borderRadius: wp(5), paddingHorizontal: wp(6), paddingVertical: hp(2) },
+  statusBadgeText: { fontSize: fs(10), fontWeight: '600' },
+  actions: { gap: wp(6), alignItems: 'flex-end' },
   editBtn: {
-    paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6,
+    paddingHorizontal: wp(10), paddingVertical: hp(4), borderRadius: wp(6),
     backgroundColor: COLORS.primaryLight, borderWidth: 1, borderColor: COLORS.primary,
   },
-  editBtnText: { fontSize: 11, fontWeight: '600', color: COLORS.primary },
-  toggleBtn: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
-  toggleBtnText: { fontSize: 11, fontWeight: '600' },
+  editBtnText: { fontSize: fs(11), fontWeight: '600', color: COLORS.primary },
+  toggleBtn: { paddingHorizontal: wp(10), paddingVertical: hp(4), borderRadius: wp(6) },
+  toggleBtnText: { fontSize: fs(11), fontWeight: '600' },
   modal: { flex: 1, backgroundColor: COLORS.white },
   modalHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    padding: 20, borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
+    padding: wp(20), borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
   },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: COLORS.gray900 },
-  modalClose: { fontSize: 20, color: COLORS.gray500, padding: 4 },
-  modalBody: { padding: 20 },
-  fieldLabel: { fontSize: 13, fontWeight: '600', color: COLORS.gray700, marginTop: 14, marginBottom: 6 },
+  modalTitle: { fontSize: fs(18), fontWeight: '700', color: COLORS.gray900 },
+  modalClose: { fontSize: fs(20), color: COLORS.gray500, padding: wp(4) },
+  modalBody: { padding: wp(20) },
+  fieldLabel: { fontSize: fs(13), fontWeight: '600', color: COLORS.gray700, marginTop: hp(14), marginBottom: hp(6) },
   input: {
-    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: 10,
-    paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: COLORS.gray900, backgroundColor: COLORS.white,
+    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: wp(10),
+    paddingHorizontal: wp(14), paddingVertical: hp(10),
+    fontSize: fs(14), color: COLORS.gray900, backgroundColor: COLORS.white,
   },
-  pickerRow: { marginBottom: 4 },
+  pickerRow: { marginBottom: hp(4) },
   pickerChip: {
-    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, marginRight: 8,
+    paddingHorizontal: wp(14), paddingVertical: hp(8), borderRadius: wp(20), marginRight: wp(8),
     backgroundColor: COLORS.gray100, borderWidth: 1, borderColor: COLORS.gray200,
   },
   pickerChipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  pickerChipText: { fontSize: 13, color: COLORS.gray700 },
+  pickerChipText: { fontSize: fs(13), color: COLORS.gray700 },
   pickerChipTextActive: { color: COLORS.white },
   submitBtn: {
-    marginTop: 28, marginBottom: 40, backgroundColor: COLORS.primary,
-    borderRadius: 12, paddingVertical: 14, alignItems: 'center',
+    marginTop: hp(28), marginBottom: hp(40), backgroundColor: COLORS.primary,
+    borderRadius: wp(12), paddingVertical: hp(14), alignItems: 'center',
   },
   submitBtnDisabled: { opacity: 0.6 },
-  submitBtnText: { color: COLORS.white, fontSize: 16, fontWeight: '700' },
+  submitBtnText: { color: COLORS.white, fontSize: fs(16), fontWeight: '700' },
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useAppSelector } from '../../store';
 import { COLORS } from '../../constants';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 interface MenuItem {
   icon: string;
@@ -66,33 +67,33 @@ export function MoreScreen({ navigation }: { navigation: { navigate: (route: str
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.gray50 },
-  content: { padding: 16, paddingBottom: 40 },
+  content: { padding: wp(16), paddingBottom: hp(40), maxWidth: isTablet ? wp(600) : undefined, alignSelf: 'center' as const, width: '100%' },
   profileCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 14,
-    backgroundColor: COLORS.white, borderRadius: 14, padding: 16,
-    marginBottom: 24, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
+    flexDirection: 'row', alignItems: 'center', gap: wp(14),
+    backgroundColor: COLORS.white, borderRadius: wp(14), padding: wp(16),
+    marginBottom: hp(24), shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: ms(4), elevation: 2,
   },
   avatar: {
-    width: 48, height: 48, borderRadius: 24,
+    width: ms(48), height: ms(48), borderRadius: ms(24),
     backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center',
   },
-  avatarText: { color: COLORS.white, fontSize: 20, fontWeight: '700' },
-  userName: { fontSize: 16, fontWeight: '700', color: COLORS.gray900 },
-  userEmail: { fontSize: 13, color: COLORS.gray500, marginTop: 1 },
-  userRole: { fontSize: 12, color: COLORS.primary, marginTop: 2, textTransform: 'capitalize' },
+  avatarText: { color: COLORS.white, fontSize: fs(20), fontWeight: '700' },
+  userName: { fontSize: fs(16), fontWeight: '700', color: COLORS.gray900 },
+  userEmail: { fontSize: fs(13), color: COLORS.gray500, marginTop: hp(1) },
+  userRole: { fontSize: fs(12), color: COLORS.primary, marginTop: hp(2), textTransform: 'capitalize' },
   sectionLabel: {
-    fontSize: 11, fontWeight: '700', color: COLORS.gray400,
-    textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10,
+    fontSize: fs(11), fontWeight: '700', color: COLORS.gray400,
+    textTransform: 'uppercase', letterSpacing: 1, marginBottom: hp(10),
   },
   menuItem: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: COLORS.white, borderRadius: 14, padding: 14,
-    marginBottom: 10, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 3, elevation: 1,
+    backgroundColor: COLORS.white, borderRadius: wp(14), padding: wp(14),
+    marginBottom: hp(10), shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: ms(3), elevation: 1,
   },
-  menuIcon: { width: 44, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginRight: 14 },
-  menuIconText: { fontSize: 22 },
+  menuIcon: { width: ms(44), height: ms(44), borderRadius: wp(12), alignItems: 'center', justifyContent: 'center', marginRight: wp(14) },
+  menuIconText: { fontSize: ms(22) },
   menuText: { flex: 1 },
-  menuLabel: { fontSize: 15, fontWeight: '600', color: COLORS.gray900 },
-  menuDescription: { fontSize: 12, color: COLORS.gray500, marginTop: 2 },
-  chevron: { fontSize: 22, color: COLORS.gray400 },
+  menuLabel: { fontSize: fs(15), fontWeight: '600', color: COLORS.gray900 },
+  menuDescription: { fontSize: fs(12), color: COLORS.gray500, marginTop: hp(2) },
+  chevron: { fontSize: ms(22), color: COLORS.gray400 },
 });

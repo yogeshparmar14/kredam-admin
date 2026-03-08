@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ActivityIndicator, Text, Image, StyleSheet } from 'react-native';
 import { COLORS } from '../../constants';
+import { hp, fs, ms } from '../../utils/responsive';
 
 export function LoadingScreen({ message = 'Loading...' }: { message?: string }) {
   return (
@@ -14,7 +15,7 @@ export function LoadingScreen({ message = 'Loading...' }: { message?: string }) 
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.white },
-  logo: { width: 150, height: 150, marginBottom: 24 },
+  logo: { width: ms(150), height: ms(150), marginBottom: hp(24) },
   loader: { marginTop: 0 },
-  text: { marginTop: 12, fontSize: 14, color: COLORS.gray500 },
+  text: { marginTop: hp(12), fontSize: fs(14), color: COLORS.gray500 },
 });

@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, Modal, TextInput, ScrollView, Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useGetArenasQuery, useCreateArenaMutation, useUpdateArenaMutation } from '../../store/api/arenaApi';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
 import type { IArena } from '../../types';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 const emptyForm = () => ({
   name: '', code: '', street: '', city: '', state: '',
@@ -121,6 +123,7 @@ export function ArenasScreen() {
       </TouchableOpacity>
 
       <Modal visible={showForm} animationType="slide" presentationStyle="pageSheet">
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <View style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>{editArena ? 'Edit Arena' : 'New Arena'}</Text>
@@ -168,7 +171,7 @@ export function ArenasScreen() {
                   placeholderTextColor={COLORS.gray400}
                 />
               </View>
-              <View style={{ width: 12 }} />
+              <View style={{ width: wp(12) }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.fieldLabel}>State</Text>
                 <TextInput
@@ -194,7 +197,7 @@ export function ArenasScreen() {
                   keyboardType="decimal-pad"
                 />
               </View>
-              <View style={{ width: 12 }} />
+              <View style={{ width: wp(12) }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.fieldLabel}>Longitude</Text>
                 <TextInput
@@ -220,7 +223,7 @@ export function ArenasScreen() {
                   placeholderTextColor={COLORS.gray400}
                 />
               </View>
-              <View style={{ width: 12 }} />
+              <View style={{ width: wp(12) }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.fieldLabel}>Close</Text>
                 <TextInput
@@ -244,6 +247,7 @@ export function ArenasScreen() {
             </TouchableOpacity>
           </ScrollView>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -251,51 +255,51 @@ export function ArenasScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.gray50 },
-  list: { padding: 16, paddingBottom: 100 },
-  empty: { alignItems: 'center', marginTop: 80 },
-  emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: COLORS.gray400, fontSize: 15 },
+  list: { padding: wp(16), paddingBottom: hp(100) },
+  empty: { alignItems: 'center', marginTop: hp(80) },
+  emptyIcon: { fontSize: fs(48), marginBottom: hp(12) },
+  emptyText: { color: COLORS.gray400, fontSize: fs(15) },
   fab: {
-    position: 'absolute', bottom: 24, right: 20,
-    backgroundColor: COLORS.primary, borderRadius: 28,
-    paddingHorizontal: 20, paddingVertical: 14,
-    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 8, elevation: 6,
+    position: 'absolute', bottom: hp(24), right: wp(20),
+    backgroundColor: COLORS.primary, borderRadius: wp(28),
+    paddingHorizontal: wp(20), paddingVertical: hp(14),
+    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: ms(8), elevation: ms(6),
   },
-  fabText: { color: COLORS.white, fontWeight: '700', fontSize: 15 },
+  fabText: { color: COLORS.white, fontWeight: '700', fontSize: fs(15) },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  cardActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  statusDot: { width: 8, height: 8, borderRadius: 4 },
+  cardActions: { flexDirection: 'row', alignItems: 'center', gap: wp(8) },
+  statusDot: { width: ms(8), height: ms(8), borderRadius: wp(4) },
   editBtn: {
-    paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6,
+    paddingHorizontal: wp(10), paddingVertical: hp(4), borderRadius: wp(6),
     backgroundColor: COLORS.primaryLight, borderWidth: 1, borderColor: COLORS.primary,
   },
-  editBtnText: { fontSize: 12, fontWeight: '600', color: COLORS.primary },
-  arenaName: { fontSize: 15, fontWeight: '700', color: COLORS.gray900 },
-  arenaCode: { fontSize: 12, color: COLORS.gray500, marginTop: 2 },
-  arenaMeta: { fontSize: 12, color: COLORS.gray500, marginTop: 6 },
+  editBtnText: { fontSize: fs(12), fontWeight: '600', color: COLORS.primary },
+  arenaName: { fontSize: fs(15), fontWeight: '700', color: COLORS.gray900 },
+  arenaCode: { fontSize: fs(12), color: COLORS.gray500, marginTop: hp(2) },
+  arenaMeta: { fontSize: fs(12), color: COLORS.gray500, marginTop: hp(6) },
   modal: { flex: 1, backgroundColor: COLORS.white },
   modalHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    padding: 20, borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
+    padding: wp(20), borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
   },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: COLORS.gray900 },
-  modalClose: { fontSize: 20, color: COLORS.gray500, padding: 4 },
-  modalBody: { padding: 20 },
+  modalTitle: { fontSize: fs(18), fontWeight: '700', color: COLORS.gray900 },
+  modalClose: { fontSize: fs(20), color: COLORS.gray500, padding: wp(4) },
+  modalBody: { padding: wp(20) },
   sectionLabel: {
-    fontSize: 12, fontWeight: '700', color: COLORS.gray400,
-    textTransform: 'uppercase', letterSpacing: 0.8, marginTop: 20, marginBottom: 4,
+    fontSize: fs(12), fontWeight: '700', color: COLORS.gray400,
+    textTransform: 'uppercase', letterSpacing: wp(0.8), marginTop: hp(20), marginBottom: hp(4),
   },
-  fieldLabel: { fontSize: 13, fontWeight: '600', color: COLORS.gray700, marginTop: 12, marginBottom: 6 },
+  fieldLabel: { fontSize: fs(13), fontWeight: '600', color: COLORS.gray700, marginTop: hp(12), marginBottom: hp(6) },
   input: {
-    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: 10,
-    paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: COLORS.gray900, backgroundColor: COLORS.white,
+    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: wp(10),
+    paddingHorizontal: wp(14), paddingVertical: hp(10),
+    fontSize: fs(14), color: COLORS.gray900, backgroundColor: COLORS.white,
   },
   twoCol: { flexDirection: 'row' },
   submitBtn: {
-    marginTop: 28, marginBottom: 40, backgroundColor: COLORS.primary,
-    borderRadius: 12, paddingVertical: 14, alignItems: 'center',
+    marginTop: hp(28), marginBottom: hp(40), backgroundColor: COLORS.primary,
+    borderRadius: wp(12), paddingVertical: hp(14), alignItems: 'center',
   },
   submitBtnDisabled: { opacity: 0.6 },
-  submitBtnText: { color: COLORS.white, fontSize: 16, fontWeight: '700' },
+  submitBtnText: { color: COLORS.white, fontSize: fs(16), fontWeight: '700' },
 });

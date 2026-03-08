@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
+import { wp, hp, fs, isTablet } from '../../utils/responsive';
 
 export function DashboardScreen() {
   const { user, company } = useAuth();
@@ -46,29 +47,29 @@ export function DashboardScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.gray50 },
-  content: { padding: 16 },
+  content: { padding: wp(16), maxWidth: isTablet ? wp(600) : undefined, alignSelf: 'center' as const, width: '100%' },
   header: {
     flexDirection: 'row', justifyContent: 'space-between',
-    alignItems: 'center', marginBottom: 20,
+    alignItems: 'center', marginBottom: hp(20),
   },
-  greeting: { fontSize: 14, color: COLORS.gray500 },
-  userName: { fontSize: 20, fontWeight: 'bold', color: COLORS.gray900 },
+  greeting: { fontSize: fs(14), color: COLORS.gray500 },
+  userName: { fontSize: fs(20), fontWeight: 'bold', color: COLORS.gray900 },
   companyBadge: {
-    backgroundColor: COLORS.primaryLight, borderRadius: 8,
-    paddingHorizontal: 10, paddingVertical: 4,
+    backgroundColor: COLORS.primaryLight, borderRadius: wp(8),
+    paddingHorizontal: wp(10), paddingVertical: hp(4),
   },
-  companyText: { fontSize: 12, color: COLORS.primary, fontWeight: '600' },
-  infoCard: { marginBottom: 12 },
-  infoTitle: { fontSize: 16, fontWeight: '700', color: COLORS.gray900, marginBottom: 6 },
-  infoText: { fontSize: 14, color: COLORS.gray500, lineHeight: 20 },
-  userCard: { marginBottom: 12 },
-  userCardLabel: { fontSize: 11, color: COLORS.gray400, marginBottom: 2 },
-  userCardName: { fontSize: 16, fontWeight: '700', color: COLORS.gray900 },
-  userCardEmail: { fontSize: 13, color: COLORS.gray500, marginTop: 2 },
+  companyText: { fontSize: fs(12), color: COLORS.primary, fontWeight: '600' },
+  infoCard: { marginBottom: hp(12) },
+  infoTitle: { fontSize: fs(16), fontWeight: '700', color: COLORS.gray900, marginBottom: hp(6) },
+  infoText: { fontSize: fs(14), color: COLORS.gray500, lineHeight: fs(20) },
+  userCard: { marginBottom: hp(12) },
+  userCardLabel: { fontSize: fs(11), color: COLORS.gray400, marginBottom: hp(2) },
+  userCardName: { fontSize: fs(16), fontWeight: '700', color: COLORS.gray900 },
+  userCardEmail: { fontSize: fs(13), color: COLORS.gray500, marginTop: hp(2) },
   roleBadge: {
-    alignSelf: 'flex-start', marginTop: 8,
-    backgroundColor: COLORS.primaryLight, borderRadius: 6,
-    paddingHorizontal: 8, paddingVertical: 3,
+    alignSelf: 'flex-start', marginTop: hp(8),
+    backgroundColor: COLORS.primaryLight, borderRadius: wp(6),
+    paddingHorizontal: wp(8), paddingVertical: hp(3),
   },
-  roleBadgeText: { fontSize: 11, color: COLORS.primary, fontWeight: '600' },
+  roleBadgeText: { fontSize: fs(11), color: COLORS.primary, fontWeight: '600' },
 });

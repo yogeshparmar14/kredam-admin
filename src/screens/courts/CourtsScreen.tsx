@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, Modal, TextInput, ScrollView, Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useGetCourtsByArenaQuery, useCreateCourtMutation, useUpdateCourtMutation } from '../../store/api/courtApi';
 import { useGetArenasQuery } from '../../store/api/arenaApi';
@@ -9,6 +10,7 @@ import { useGetSportsByArenaQuery } from '../../store/api/sportApi';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
 import type { ICourt, IArena, ISport } from '../../types';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 const emptyForm = () => ({ name: '', arena: '', sport: '' });
 
@@ -139,6 +141,7 @@ export function CourtsScreen() {
       )}
 
       <Modal visible={showForm} animationType="slide" presentationStyle="pageSheet">
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <View style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>{editCourt ? 'Edit Court' : 'New Court'}</Text>
@@ -203,6 +206,7 @@ export function CourtsScreen() {
             </TouchableOpacity>
           </ScrollView>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -213,62 +217,62 @@ const styles = StyleSheet.create({
   arenaSelector: {
     backgroundColor: COLORS.white, borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
   },
-  arenaSelectorContent: { paddingHorizontal: 16, paddingVertical: 10, gap: 8 },
+  arenaSelectorContent: { paddingHorizontal: wp(16), paddingVertical: hp(10), gap: wp(8) },
   arenaChip: {
-    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
+    paddingHorizontal: wp(14), paddingVertical: hp(7), borderRadius: wp(20),
     backgroundColor: COLORS.gray100, borderWidth: 1, borderColor: COLORS.gray200,
   },
   arenaChipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  arenaChipText: { fontSize: 13, color: COLORS.gray700 },
+  arenaChipText: { fontSize: fs(13), color: COLORS.gray700 },
   arenaChipTextActive: { color: COLORS.white },
-  list: { padding: 16, paddingBottom: 100 },
-  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80 },
-  emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: COLORS.gray400, fontSize: 15, textAlign: 'center', paddingHorizontal: 40 },
+  list: { padding: wp(16), paddingBottom: hp(100) },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: hp(80) },
+  emptyIcon: { fontSize: fs(48), marginBottom: hp(12) },
+  emptyText: { color: COLORS.gray400, fontSize: fs(15), textAlign: 'center', paddingHorizontal: wp(40) },
   fab: {
-    position: 'absolute', bottom: 24, right: 20,
-    backgroundColor: COLORS.primary, borderRadius: 28,
-    paddingHorizontal: 20, paddingVertical: 14,
-    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 8, elevation: 6,
+    position: 'absolute', bottom: hp(24), right: wp(20),
+    backgroundColor: COLORS.primary, borderRadius: wp(28),
+    paddingHorizontal: wp(20), paddingVertical: hp(14),
+    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: ms(8), elevation: ms(6),
   },
-  fabText: { color: COLORS.white, fontWeight: '700', fontSize: 15 },
+  fabText: { color: COLORS.white, fontWeight: '700', fontSize: fs(15) },
   cardRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  statusDot: { width: 8, height: 8, borderRadius: 4 },
+  cardRight: { flexDirection: 'row', alignItems: 'center', gap: wp(8) },
+  statusDot: { width: ms(8), height: ms(8), borderRadius: ms(4) },
   editBtn: {
-    paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6,
+    paddingHorizontal: wp(10), paddingVertical: hp(4), borderRadius: wp(6),
     backgroundColor: COLORS.primaryLight, borderWidth: 1, borderColor: COLORS.primary,
   },
-  editBtnText: { fontSize: 12, fontWeight: '600', color: COLORS.primary },
-  courtName: { fontSize: 15, fontWeight: '700', color: COLORS.gray900 },
-  courtMeta: { fontSize: 12, color: COLORS.gray500, marginTop: 2 },
-  courtPricing: { fontSize: 12, color: COLORS.gray600, marginTop: 4 },
+  editBtnText: { fontSize: fs(12), fontWeight: '600', color: COLORS.primary },
+  courtName: { fontSize: fs(15), fontWeight: '700', color: COLORS.gray900 },
+  courtMeta: { fontSize: fs(12), color: COLORS.gray500, marginTop: hp(2) },
+  courtPricing: { fontSize: fs(12), color: COLORS.gray600, marginTop: hp(4) },
   modal: { flex: 1, backgroundColor: COLORS.white },
   modalHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    padding: 20, borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
+    padding: wp(20), borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
   },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: COLORS.gray900 },
-  modalClose: { fontSize: 20, color: COLORS.gray500, padding: 4 },
-  modalBody: { padding: 20 },
-  fieldLabel: { fontSize: 13, fontWeight: '600', color: COLORS.gray700, marginTop: 12, marginBottom: 6 },
+  modalTitle: { fontSize: fs(18), fontWeight: '700', color: COLORS.gray900 },
+  modalClose: { fontSize: fs(20), color: COLORS.gray500, padding: wp(4) },
+  modalBody: { padding: wp(20) },
+  fieldLabel: { fontSize: fs(13), fontWeight: '600', color: COLORS.gray700, marginTop: hp(12), marginBottom: hp(6) },
   input: {
-    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: 10,
-    paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: COLORS.gray900, backgroundColor: COLORS.white,
+    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: wp(10),
+    paddingHorizontal: wp(14), paddingVertical: hp(10),
+    fontSize: fs(14), color: COLORS.gray900, backgroundColor: COLORS.white,
   },
-  pickerRow: { marginBottom: 4 },
+  pickerRow: { marginBottom: hp(4) },
   pickerChip: {
-    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, marginRight: 8,
+    paddingHorizontal: wp(14), paddingVertical: hp(8), borderRadius: wp(20), marginRight: wp(8),
     backgroundColor: COLORS.gray100, borderWidth: 1, borderColor: COLORS.gray200,
   },
   pickerChipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  pickerChipText: { fontSize: 13, color: COLORS.gray700 },
+  pickerChipText: { fontSize: fs(13), color: COLORS.gray700 },
   pickerChipTextActive: { color: COLORS.white },
   submitBtn: {
-    marginTop: 28, marginBottom: 40, backgroundColor: COLORS.primary,
-    borderRadius: 12, paddingVertical: 14, alignItems: 'center',
+    marginTop: hp(28), marginBottom: hp(40), backgroundColor: COLORS.primary,
+    borderRadius: wp(12), paddingVertical: hp(14), alignItems: 'center',
   },
   submitBtnDisabled: { opacity: 0.6 },
-  submitBtnText: { color: COLORS.white, fontSize: 16, fontWeight: '700' },
+  submitBtnText: { color: COLORS.white, fontSize: fs(16), fontWeight: '700' },
 });

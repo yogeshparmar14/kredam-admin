@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, Modal, TextInput, ScrollView, Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useGetCourtsByArenaQuery, useUpdateCourtMutation } from '../../store/api/courtApi';
 import { useGetArenasQuery } from '../../store/api/arenaApi';
@@ -9,6 +10,7 @@ import { useGetSportsByArenaQuery } from '../../store/api/sportApi';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
 import type { ICourt, IArena, ISport, ICourtPricingRule, DayType } from '../../types';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 // ── Constants ──────────────────────────────────────────────────────────
 
@@ -218,6 +220,7 @@ export function PricingScreen() {
 
       {/* Edit Pricing Modal */}
       <Modal visible={!!editingCourt} animationType="slide" presentationStyle="pageSheet">
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <View style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Edit Pricing — {editingCourt?.name}</Text>
@@ -325,6 +328,7 @@ export function PricingScreen() {
             </TouchableOpacity>
           </ScrollView>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -335,94 +339,94 @@ export function PricingScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.gray50 },
   arenaSelector: { backgroundColor: COLORS.white, borderBottomWidth: 1, borderBottomColor: COLORS.gray200 },
-  arenaSelectorContent: { paddingHorizontal: 16, paddingVertical: 10, gap: 8 },
+  arenaSelectorContent: { paddingHorizontal: wp(16), paddingVertical: hp(10), gap: wp(8) },
   arenaChip: {
-    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
+    paddingHorizontal: wp(14), paddingVertical: hp(7), borderRadius: wp(20),
     backgroundColor: COLORS.gray100, borderWidth: 1, borderColor: COLORS.gray200,
   },
   arenaChipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  arenaChipText: { fontSize: 13, color: COLORS.gray700 },
+  arenaChipText: { fontSize: fs(13), color: COLORS.gray700 },
   arenaChipTextActive: { color: COLORS.white },
-  list: { padding: 16, paddingBottom: 40 },
-  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80 },
-  emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: COLORS.gray400, fontSize: 15, textAlign: 'center', paddingHorizontal: 40 },
+  list: { padding: wp(16), paddingBottom: hp(40) },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: hp(80) },
+  emptyIcon: { fontSize: fs(48), marginBottom: hp(12) },
+  emptyText: { color: COLORS.gray400, fontSize: fs(15), textAlign: 'center', paddingHorizontal: wp(40) },
   // Card
-  cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 },
-  courtName: { fontSize: 15, fontWeight: '700', color: COLORS.gray900 },
-  courtSport: { fontSize: 12, color: COLORS.gray500, marginTop: 2 },
-  defaultPriceWrap: { alignItems: 'flex-end', marginRight: 8 },
-  defaultPriceLabel: { fontSize: 10, color: COLORS.gray400, textTransform: 'uppercase' },
-  defaultPrice: { fontSize: 14, fontWeight: '700', color: COLORS.gray900 },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', gap: wp(10), marginBottom: hp(10) },
+  courtName: { fontSize: fs(15), fontWeight: '700', color: COLORS.gray900 },
+  courtSport: { fontSize: fs(12), color: COLORS.gray500, marginTop: hp(2) },
+  defaultPriceWrap: { alignItems: 'flex-end', marginRight: wp(8) },
+  defaultPriceLabel: { fontSize: fs(10), color: COLORS.gray400, textTransform: 'uppercase' },
+  defaultPrice: { fontSize: fs(14), fontWeight: '700', color: COLORS.gray900 },
   editBtn: {
-    paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8,
+    paddingHorizontal: wp(10), paddingVertical: hp(5), borderRadius: wp(8),
     backgroundColor: COLORS.primaryLight, borderWidth: 1, borderColor: COLORS.primary,
   },
-  editBtnText: { fontSize: 12, fontWeight: '600', color: COLORS.primary },
-  rulesTable: { borderRadius: 8, borderWidth: 1, borderColor: COLORS.gray200, overflow: 'hidden' },
+  editBtnText: { fontSize: fs(12), fontWeight: '600', color: COLORS.primary },
+  rulesTable: { borderRadius: wp(8), borderWidth: 1, borderColor: COLORS.gray200, overflow: 'hidden' },
   rulesHeader: {
     flexDirection: 'row', backgroundColor: COLORS.gray100,
-    paddingHorizontal: 10, paddingVertical: 6,
+    paddingHorizontal: wp(10), paddingVertical: hp(6),
     borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
   },
   rulesRow: {
-    flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 7,
+    flexDirection: 'row', paddingHorizontal: wp(10), paddingVertical: hp(7),
     borderBottomWidth: 1, borderBottomColor: COLORS.gray100,
   },
-  rulesCell: { fontSize: 12 },
-  rulesCellDay: { flex: 1.2, fontWeight: '600', color: COLORS.gray500, textTransform: 'uppercase', fontSize: 10 },
+  rulesCell: { fontSize: fs(12) },
+  rulesCellDay: { flex: 1.2, fontWeight: '600', color: COLORS.gray500, textTransform: 'uppercase', fontSize: fs(10) },
   rulesCellTime: { flex: 2 },
   rulesCellPrice: { flex: 1, textAlign: 'right' },
   rulesDayChip: { color: COLORS.primary, fontWeight: '600' },
   rulesValue: { color: COLORS.gray700 },
   rulesPrice: { color: COLORS.gray900, fontWeight: '700' },
-  noRules: { fontSize: 12, color: COLORS.gray400, marginTop: 4 },
+  noRules: { fontSize: fs(12), color: COLORS.gray400, marginTop: hp(4) },
   // Modal
   modal: { flex: 1, backgroundColor: COLORS.white },
   modalHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    padding: 20, borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
+    padding: wp(20), borderBottomWidth: 1, borderBottomColor: COLORS.gray200,
   },
-  modalTitle: { fontSize: 17, fontWeight: '700', color: COLORS.gray900, flex: 1, marginRight: 12 },
-  modalClose: { fontSize: 20, color: COLORS.gray500, padding: 4 },
-  modalBody: { padding: 20 },
-  fieldLabel: { fontSize: 13, fontWeight: '600', color: COLORS.gray700, marginBottom: 6 },
+  modalTitle: { fontSize: fs(17), fontWeight: '700', color: COLORS.gray900, flex: 1, marginRight: wp(12) },
+  modalClose: { fontSize: fs(20), color: COLORS.gray500, padding: wp(4) },
+  modalBody: { padding: wp(20) },
+  fieldLabel: { fontSize: fs(13), fontWeight: '600', color: COLORS.gray700, marginBottom: hp(6) },
   input: {
-    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: 10,
-    paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: COLORS.gray900, backgroundColor: COLORS.white,
+    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: wp(10),
+    paddingHorizontal: wp(14), paddingVertical: hp(10),
+    fontSize: fs(14), color: COLORS.gray900, backgroundColor: COLORS.white,
   },
   rulesSectionHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    marginTop: 20, marginBottom: 4,
+    marginTop: hp(20), marginBottom: hp(4),
   },
-  rulesSectionTitle: { fontSize: 13, fontWeight: '700', color: COLORS.gray700 },
+  rulesSectionTitle: { fontSize: fs(13), fontWeight: '700', color: COLORS.gray700 },
   addRuleBtn: {
-    paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8,
+    paddingHorizontal: wp(12), paddingVertical: hp(6), borderRadius: wp(8),
     backgroundColor: COLORS.primaryLight, borderWidth: 1, borderColor: COLORS.primary,
   },
-  addRuleBtnText: { fontSize: 12, fontWeight: '600', color: COLORS.primary },
-  noRulesHint: { fontSize: 12, color: COLORS.gray400, marginBottom: 8 },
+  addRuleBtnText: { fontSize: fs(12), fontWeight: '600', color: COLORS.primary },
+  noRulesHint: { fontSize: fs(12), color: COLORS.gray400, marginBottom: hp(8) },
   ruleRow: {
-    backgroundColor: COLORS.gray50, borderRadius: 10, padding: 12,
-    marginBottom: 10, borderWidth: 1, borderColor: COLORS.gray200,
+    backgroundColor: COLORS.gray50, borderRadius: wp(10), padding: wp(12),
+    marginBottom: hp(10), borderWidth: 1, borderColor: COLORS.gray200,
   },
-  ruleLabel: { fontSize: 11, fontWeight: '600', color: COLORS.gray500, marginBottom: 4 },
-  dayPickerRow: { marginBottom: 10 },
+  ruleLabel: { fontSize: fs(11), fontWeight: '600', color: COLORS.gray500, marginBottom: hp(4) },
+  dayPickerRow: { marginBottom: hp(10) },
   dayChip: {
-    paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14, marginRight: 6,
+    paddingHorizontal: wp(10), paddingVertical: hp(5), borderRadius: wp(14), marginRight: wp(6),
     backgroundColor: COLORS.gray100, borderWidth: 1, borderColor: COLORS.gray200,
   },
   dayChipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  dayChipText: { fontSize: 11, color: COLORS.gray700 },
+  dayChipText: { fontSize: fs(11), color: COLORS.gray700 },
   dayChipTextActive: { color: COLORS.white, fontWeight: '600' },
-  timeRow: { flexDirection: 'row', marginBottom: 8 },
-  removeRuleBtn: { alignSelf: 'flex-end', paddingVertical: 4, paddingHorizontal: 2 },
-  removeRuleBtnText: { fontSize: 12, color: COLORS.danger, fontWeight: '600' },
+  timeRow: { flexDirection: 'row', marginBottom: hp(8) },
+  removeRuleBtn: { alignSelf: 'flex-end', paddingVertical: hp(4), paddingHorizontal: wp(2) },
+  removeRuleBtnText: { fontSize: fs(12), color: COLORS.danger, fontWeight: '600' },
   submitBtn: {
-    marginTop: 24, marginBottom: 40, backgroundColor: COLORS.primary,
-    borderRadius: 12, paddingVertical: 14, alignItems: 'center',
+    marginTop: hp(24), marginBottom: hp(40), backgroundColor: COLORS.primary,
+    borderRadius: wp(12), paddingVertical: hp(14), alignItems: 'center',
   },
   submitBtnDisabled: { opacity: 0.6 },
-  submitBtnText: { color: COLORS.white, fontSize: 16, fontWeight: '700' },
+  submitBtnText: { color: COLORS.white, fontSize: fs(16), fontWeight: '700' },
 });

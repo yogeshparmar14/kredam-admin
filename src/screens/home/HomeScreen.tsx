@@ -6,6 +6,7 @@ import { useGetArenasQuery } from '../../store/api/arenaApi';
 import { useAppSelector } from '../../store';
 import { Card } from '../../components/ui/Card';
 import { COLORS } from '../../constants';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 import type { IArena } from '../../types';
 
 function ArenaCard({ arena }: { arena: IArena }) {
@@ -73,22 +74,22 @@ export function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.gray50 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  list: { padding: 16, paddingBottom: 40 },
-  header: { marginBottom: 16 },
-  companyName: { fontSize: 22, fontWeight: '700', color: COLORS.gray900 },
-  subtitle: { fontSize: 13, color: COLORS.gray500, marginTop: 2 },
+  list: { padding: wp(16), paddingBottom: hp(40), maxWidth: isTablet ? wp(600) : undefined, alignSelf: 'center' as const, width: '100%' },
+  header: { marginBottom: hp(16) },
+  companyName: { fontSize: fs(22), fontWeight: '700', color: COLORS.gray900 },
+  subtitle: { fontSize: fs(13), color: COLORS.gray500, marginTop: hp(2) },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  arenaName: { fontSize: 16, fontWeight: '700', color: COLORS.gray900, flex: 1 },
-  arenaCode: { fontSize: 13, color: COLORS.gray500, marginTop: 2, marginBottom: 6 },
-  detail: { fontSize: 13, color: COLORS.gray600, marginTop: 3 },
-  badge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  arenaName: { fontSize: fs(16), fontWeight: '700', color: COLORS.gray900, flex: 1 },
+  arenaCode: { fontSize: fs(13), color: COLORS.gray500, marginTop: hp(2), marginBottom: hp(6) },
+  detail: { fontSize: fs(13), color: COLORS.gray600, marginTop: hp(3) },
+  badge: { paddingHorizontal: wp(8), paddingVertical: hp(3), borderRadius: wp(6) },
   activeBadge: { backgroundColor: '#dcfce7' },
   inactiveBadge: { backgroundColor: '#fee2e2' },
-  badgeText: { fontSize: 11, fontWeight: '600' },
+  badgeText: { fontSize: fs(11), fontWeight: '600' },
   activeText: { color: COLORS.success },
   inactiveText: { color: COLORS.danger },
-  empty: { alignItems: 'center', paddingTop: 60 },
-  emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { fontSize: 16, fontWeight: '600', color: COLORS.gray700 },
-  emptySubtext: { fontSize: 13, color: COLORS.gray500, marginTop: 4 },
+  empty: { alignItems: 'center', paddingTop: hp(60) },
+  emptyIcon: { fontSize: ms(48), marginBottom: hp(12) },
+  emptyText: { fontSize: fs(16), fontWeight: '600', color: COLORS.gray700 },
+  emptySubtext: { fontSize: fs(13), color: COLORS.gray500, marginTop: hp(4) },
 });

@@ -1,8 +1,8 @@
 export const API_URL = 'https://kreeda-backend-production.up.railway.app/api/v1';
 
 export const COLORS = {
-  primary: '#2563eb',
-  primaryLight: '#dbeafe',
+  primary: '#1a8a7d',
+  primaryLight: '#e0f5f2',
   danger: '#dc2626',
   success: '#16a34a',
   warning: '#d97706',

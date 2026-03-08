@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet, Image,
-  KeyboardAvoidingView, Platform, ScrollView, Alert, ActivityIndicator,
+  KeyboardAvoidingView, ScrollView, Alert, ActivityIndicator,
 } from 'react-native';
 import { useLoginMutation } from '../../store/api/authApi';
 import { setCredentials } from '../../store/slices/authSlice';
 import { useAppDispatch } from '../../store';
 import { COLORS } from '../../constants';
+import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 export function LoginScreen({ navigation }: { navigation: { navigate: (route: string) => void } }) {
   const dispatch = useAppDispatch();
@@ -35,13 +36,11 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (route: st
   };
 
   return (
-    <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={styles.flex} behavior="padding">
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         {/* Logo */}
         <View style={styles.logoContainer}>
           <Image source={require('../../assets/logo.png')} style={styles.logo} resizeMode="contain" />
-          <Text style={styles.appName}>KREEDAM ADMIN</Text>
-          <Text style={styles.tagline}>Sports Venue Management</Text>
         </View>
 
         {/* Form */}
@@ -100,31 +99,31 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (route: st
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: COLORS.white },
-  container: { flexGrow: 1, justifyContent: 'center', padding: 24 },
-  logoContainer: { alignItems: 'center', marginBottom: 40 },
-  logo: { width: 120, height: 120, marginBottom: 12 },
-  appName: { fontSize: 28, fontWeight: 'bold', color: COLORS.gray900, marginBottom: 4 },
-  tagline: { fontSize: 14, color: COLORS.gray500 },
-  form: { gap: 4 },
-  label: { fontSize: 14, fontWeight: '500', color: COLORS.gray700, marginBottom: 6, marginTop: 12 },
+  container: { flexGrow: 1, justifyContent: 'center', padding: wp(24), maxWidth: isTablet ? wp(500) : undefined, alignSelf: 'center' as const, width: '100%' as const },
+  logoContainer: { alignItems: 'center' },
+  logo: { width: wp(180), height: wp(180), marginBottom: hp(1) },
+  appName: { fontSize: fs(28), fontWeight: 'bold', color: COLORS.gray900, marginBottom: hp(4) },
+  tagline: { fontSize: fs(14), color: COLORS.gray500 },
+  form: { gap: wp(4) },
+  label: { fontSize: fs(14), fontWeight: '500', color: COLORS.gray700, marginBottom: hp(6), marginTop: hp(12) },
   input: {
-    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: 10,
-    paddingHorizontal: 14, paddingVertical: 12,
-    fontSize: 15, color: COLORS.gray900, backgroundColor: COLORS.gray50,
+    borderWidth: 1, borderColor: COLORS.gray200, borderRadius: wp(10),
+    paddingHorizontal: wp(14), paddingVertical: hp(12),
+    fontSize: fs(15), color: COLORS.gray900, backgroundColor: COLORS.gray50,
   },
   passwordRow: { position: 'relative' },
-  passwordInput: { paddingRight: 48 },
-  eyeBtn: { position: 'absolute', right: 12, top: 12, padding: 2 },
-  eyeText: { fontSize: 18 },
+  passwordInput: { paddingRight: wp(48) },
+  eyeBtn: { position: 'absolute', right: wp(12), top: hp(12), padding: ms(2) },
+  eyeText: { fontSize: fs(18) },
   button: {
-    marginTop: 24, backgroundColor: COLORS.primary,
-    borderRadius: 10, paddingVertical: 14, alignItems: 'center',
+    marginTop: hp(24), backgroundColor: COLORS.primary,
+    borderRadius: wp(10), paddingVertical: hp(14), alignItems: 'center',
   },
   buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: COLORS.white, fontSize: 16, fontWeight: '600' },
-  forgotBtn: { alignSelf: 'flex-end', marginTop: 12 },
-  forgotText: { fontSize: 13, fontWeight: '500', color: COLORS.primary },
-  signUpRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 20 },
-  signUpText: { fontSize: 14, color: COLORS.gray500 },
-  signUpBold: { fontSize: 14, fontWeight: '600', color: COLORS.primary },
+  buttonText: { color: COLORS.white, fontSize: fs(16), fontWeight: '600' },
+  forgotBtn: { alignSelf: 'flex-end', marginTop: hp(12) },
+  forgotText: { fontSize: fs(13), fontWeight: '500', color: COLORS.primary },
+  signUpRow: { flexDirection: 'row', justifyContent: 'center', marginTop: hp(20) },
+  signUpText: { fontSize: fs(14), color: COLORS.gray500 },
+  signUpBold: { fontSize: fs(14), fontWeight: '600', color: COLORS.primary },
 });

@@ -103,7 +103,20 @@ function AdminDrawer() {
         drawerType: 'front',
       }}
     >
-      <Drawer.Screen name="Home" component={HomeScreen} />
+      <Drawer.Screen
+        name="Arena"
+        component={HomeScreen}
+        options={({ navigation }) => ({
+          headerLeft: () => (
+            <Text
+              onPress={() => navigation.openDrawer()}
+              style={{ fontSize: 22, paddingHorizontal: 16 }}
+            >
+              ☰
+            </Text>
+          ),
+        })}
+      />
       <Drawer.Screen name="Main" component={AdminTabs} options={{ headerShown: false, title: 'Slots' }} />
     </Drawer.Navigator>
   );

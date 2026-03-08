@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Image,
   KeyboardAvoidingView, ScrollView, Alert, ActivityIndicator,
 } from 'react-native';
 import { useForgotPasswordMutation } from '../../store/api/authApi';
@@ -28,9 +28,8 @@ export function ForgotPasswordScreen({ navigation }: { navigation: { navigate: (
   return (
     <KeyboardAvoidingView style={styles.flex} behavior="padding">
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={styles.header}>
-          <Text style={styles.title}>Forgot Password</Text>
-          <Text style={styles.subtitle}>Enter your email to receive a reset token</Text>
+        <View style={styles.logoContainer}>
+          <Image source={require('../../assets/logo.png')} style={styles.logo} resizeMode="contain" />
         </View>
 
         <View style={styles.form}>
@@ -69,9 +68,8 @@ export function ForgotPasswordScreen({ navigation }: { navigation: { navigate: (
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: COLORS.white },
   container: { flexGrow: 1, justifyContent: 'center', padding: wp(24), maxWidth: isTablet ? wp(500) : undefined, alignSelf: 'center' as const, width: '100%' as const },
-  header: { alignItems: 'center', marginBottom: hp(32) },
-  title: { fontSize: fs(26), fontWeight: 'bold', color: COLORS.gray900 },
-  subtitle: { fontSize: fs(14), color: COLORS.gray500, marginTop: hp(4), textAlign: 'center' },
+  logoContainer: { alignItems: 'center' },
+  logo: { width: wp(180), height: wp(180), marginBottom: hp(1) },
   form: { gap: wp(4) },
   label: { fontSize: fs(14), fontWeight: '500', color: COLORS.gray700, marginBottom: hp(6), marginTop: hp(12) },
   input: {

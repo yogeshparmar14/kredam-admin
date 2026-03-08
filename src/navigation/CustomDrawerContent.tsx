@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert,
+  View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Image,
 } from 'react-native';
 import type { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { useAppDispatch, useAppSelector } from '../store';
@@ -39,47 +39,12 @@ export function CustomDrawerContent({ navigation }: DrawerContentComponentProps)
 
   return (
     <View style={styles.container}>
-      {/* Profile */}
-      <View style={styles.profile}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{user?.name?.charAt(0)?.toUpperCase() ?? '?'}</Text>
-        </View>
-        <Text style={styles.userName}>{user?.name}</Text>
-        <Text style={styles.userEmail}>{user?.email}</Text>
-        <Text style={styles.companyName}>{company?.name}</Text>
+      {/* Logo */}
+      <View style={styles.logoContainer}>
+        <Image source={require('../assets/logo.png')} style={styles.logo} resizeMode="contain" />
       </View>
 
-      <ScrollView style={styles.scrollArea}>
-        {/* Nav items */}
-        {navItems.map((item) => (
-          <TouchableOpacity
-            key={item.route}
-            style={styles.navItem}
-            onPress={() => navigation.navigate(item.route)}
-          >
-            <Text style={styles.navIcon}>{item.icon}</Text>
-            <Text style={styles.navLabel}>{item.label}</Text>
-          </TouchableOpacity>
-        ))}
-
-        {/* Arenas section */}
-        <Text style={styles.sectionLabel}>ARENAS</Text>
-        {arenas.length === 0 ? (
-          <Text style={styles.emptyText}>No arenas</Text>
-        ) : (
-          arenas.map((arena) => (
-            <View key={arena.id} style={styles.arenaItem}>
-              <View style={[styles.dot, arena.isActive ? styles.dotActive : styles.dotInactive]} />
-              <View style={styles.arenaInfo}>
-                <Text style={styles.arenaName}>{arena.name}</Text>
-                {arena.address?.city ? (
-                  <Text style={styles.arenaCity}>{arena.address.city}</Text>
-                ) : null}
-              </View>
-            </View>
-          ))
-        )}
-      </ScrollView>
+      {/* <View style={{ flex: 1 }} /> */}
 
       {/* Logout */}
       <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
@@ -91,6 +56,8 @@ export function CustomDrawerContent({ navigation }: DrawerContentComponentProps)
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.white },
+  logoContainer: { alignItems: 'center', paddingTop: 50, paddingBottom: 20 },
+  logo: { width: 140, height: 140 },
   profile: {
     paddingTop: 50, paddingHorizontal: 20, paddingBottom: 20,
     backgroundColor: COLORS.primary,

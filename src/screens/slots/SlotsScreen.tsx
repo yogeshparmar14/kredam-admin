@@ -24,6 +24,7 @@ import type {
   ISelectedSlot,
 } from '../../types';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 
 const TIME_COL_WIDTH = wp(72);
 const CELL_WIDTH = wp(108);
@@ -263,26 +264,9 @@ export function SlotsScreen() {
 
   return (
     <View style={styles.container}>
+      <ScreenHeader title="Slots" />
       {/* Arena chips */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.arenaBar}
-        contentContainerStyle={styles.arenaBarContent}
-      >
-        {arenas.map((a) => (
-          <TouchableOpacity
-            key={a.id}
-            style={[styles.chip, selectedArenaId === a.id && styles.chipActive]}
-            onPress={() => setSelectedArenaId(a.id)}
-          >
-            <Text style={[styles.chipText, selectedArenaId === a.id && styles.chipTextActive]}>
-              {a.name}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
+      
       {/* Date nav + Sport filter */}
       <View style={styles.filterRow}>
         <View style={styles.dateNav}>
@@ -530,7 +514,7 @@ export function SlotsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.white, paddingTop: hp(50) },
+  container: { flex: 1, backgroundColor: COLORS.white },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 
   // Arena bar

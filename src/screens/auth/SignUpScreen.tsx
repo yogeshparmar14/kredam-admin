@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Image,
   KeyboardAvoidingView, ScrollView, Alert, ActivityIndicator,
 } from 'react-native';
 import { useRegisterMutation } from '../../store/api/authApi';
@@ -47,9 +47,8 @@ export function SignUpScreen({ navigation }: { navigation: { goBack: () => void 
   return (
     <KeyboardAvoidingView style={styles.flex} behavior="padding">
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={styles.header}>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Sign up to get started</Text>
+        <View style={styles.logoContainer}>
+          <Image source={require('../../assets/logo.png')} style={styles.logo} resizeMode="contain" />
         </View>
 
         <View style={styles.form}>
@@ -125,9 +124,8 @@ export function SignUpScreen({ navigation }: { navigation: { goBack: () => void 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: COLORS.white },
   container: { flexGrow: 1, justifyContent: 'center', padding: wp(24), maxWidth: isTablet ? wp(500) : undefined, alignSelf: 'center' as const, width: '100%' as const },
-  header: { alignItems: 'center', marginBottom: hp(32) },
-  title: { fontSize: fs(26), fontWeight: 'bold', color: COLORS.gray900 },
-  subtitle: { fontSize: fs(14), color: COLORS.gray500, marginTop: hp(4) },
+  logoContainer: { alignItems: 'center' },
+  logo: { width: wp(180), height: wp(180), marginBottom: hp(1) },
   form: { gap: wp(4) },
   label: { fontSize: fs(14), fontWeight: '500', color: COLORS.gray700, marginBottom: hp(6), marginTop: hp(12) },
   input: {

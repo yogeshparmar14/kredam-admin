@@ -15,14 +15,11 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { icon: '📊', label: 'Dashboard', description: 'Overview & stats', route: 'Dashboard', color: COLORS.primary },
+  { icon: '🏃', label: 'Sports', description: 'Supported sports', route: 'Sports', color: '#0891b2' },
+  { icon: '🎾', label: 'Courts', description: 'Manage courts', route: 'Courts', color: '#7c3aed' },
+  { icon: '💰', label: 'Pricing', description: 'Court pricing rules', route: 'Pricing', color: COLORS.success },
   { icon: '📅', label: 'Bookings', description: 'View all bookings', route: 'Bookings', color: '#7c3aed' },
   { icon: '🚫', label: 'Slot Blocks', description: 'Manage blocked slots', route: 'SlotBlocks', color: COLORS.warning },
-{ icon: '🎾', label: 'Courts', description: 'Manage courts', route: 'Courts', color: '#7c3aed' },
-  { icon: '💰', label: 'Pricing', description: 'Court pricing rules', route: 'Pricing', color: COLORS.success },
-  { icon: '🏃', label: 'Sports', description: 'Supported sports', route: 'Sports', color: '#0891b2' },
-  { icon: '👥', label: 'Users', description: 'Staff and admins', route: 'Users', color: COLORS.warning },
-  { icon: '🛡', label: 'Roles', description: 'Roles & permissions', route: 'Roles', color: '#dc2626' },
 ];
 
 export function MoreScreen({ navigation }: { navigation: { navigate: (route: string) => void } }) {
@@ -33,27 +30,27 @@ export function MoreScreen({ navigation }: { navigation: { navigate: (route: str
   return (
     <View style={styles.wrapper}>
       <ScreenHeader title={arenas[0]?.name ?? 'More'} />
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Menu items */}
-      {MENU_ITEMS.map((item) => (
-        <TouchableOpacity
-          key={item.route}
-          style={styles.menuItem}
-          onPress={() => navigation.navigate(item.route)}
-          activeOpacity={0.7}
-        >
-          <View style={[styles.menuIcon, { backgroundColor: item.color + '15' }]}>
-            <Text style={styles.menuIconText}>{item.icon}</Text>
-          </View>
-          <View style={styles.menuText}>
-            <Text style={styles.menuLabel}>{item.label}</Text>
-            <Text style={styles.menuDescription}>{item.description}</Text>
-          </View>
-          <Text style={styles.chevron}>›</Text>
-        </TouchableOpacity>
-      ))}
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        {/* Menu items */}
+        {MENU_ITEMS.map((item) => (
+          <TouchableOpacity
+            key={item.route}
+            style={styles.menuItem}
+            onPress={() => navigation.navigate(item.route)}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.menuIcon, { backgroundColor: item.color + '15' }]}>
+              <Text style={styles.menuIconText}>{item.icon}</Text>
+            </View>
+            <View style={styles.menuText}>
+              <Text style={styles.menuLabel}>{item.label}</Text>
+              <Text style={styles.menuDescription}>{item.description}</Text>
+            </View>
+            <Text style={styles.chevron}>›</Text>
+          </TouchableOpacity>
+        ))}
 
-    </ScrollView>
+      </ScrollView>
     </View>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, Modal, TextInput, ScrollView, Alert,
@@ -11,6 +11,8 @@ import { Card } from '../../components/ui/Card';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { COLORS } from '../../constants';
 import type { ICourt, IArena, ISport, ICourtPricingRule, DayType } from '../../types';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { setSelectedArena } from '../../store/slices/arenaSlice';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 // ── Constants ──────────────────────────────────────────────────────────
@@ -101,7 +103,8 @@ function CourtPricingCard({
 // ── Main Screen ────────────────────────────────────────────────────────
 
 export function PricingScreen() {
-  const [selectedArenaId, setSelectedArenaId] = useState('');
+  const dispatch = useAppDispatch();
+  const selectedArenaId = useAppSelector((state) => state.arena.selectedArenaId);
   const [editingCourt, setEditingCourt] = useState<ICourt | null>(null);
   const [defaultPrice, setDefaultPrice] = useState('');
   const [rules, setRules] = useState<RuleForm[]>([]);
@@ -112,6 +115,13 @@ export function PricingScreen() {
   const [updateCourt, { isLoading: saving }] = useUpdateCourtMutation();
 
   const arenas: IArena[] = arenaData?.data ?? [];
+
+  // Auto-select first arena
+  useEffect(() => {
+    if (arenas.length > 0 && !selectedArenaId) {
+      dispatch(setSelectedArena(arenas[0].id));
+    }
+  }, [arenas, selectedArenaId]);
   const sports: ISport[] = sportData ?? [];
   const courts: ICourt[] = data ?? [];
 
@@ -171,33 +181,7 @@ export function PricingScreen() {
   return (
     <View style={styles.container}>
       <ScreenHeader title="Pricing" />
-      {/* Arena selector */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.arenaSelector}
-        contentContainerStyle={styles.arenaSelectorContent}
-      >
-        {arenas.map((a) => (
-          <TouchableOpacity
-            key={a.id}
-            style={[styles.arenaChip, selectedArenaId === a.id && styles.arenaChipActive]}
-            onPress={() => setSelectedArenaId(a.id)}
-          >
-            <Text style={[styles.arenaChipText, selectedArenaId === a.id && styles.arenaChipTextActive]}>
-              {a.name}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {!selectedArenaId ? (
-        <View style={styles.empty}>
-          <Text style={styles.emptyIcon}>💰</Text>
-          <Text style={styles.emptyText}>Select an arena to manage pricing</Text>
-        </View>
-      ) : (
-        <FlatList
+      <FlatList
           data={courts}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
@@ -218,7 +202,6 @@ export function PricingScreen() {
             ) : null
           }
         />
-      )}
 
       {/* Edit Pricing Modal */}
       <Modal visible={!!editingCourt} animationType="slide" presentationStyle="pageSheet">

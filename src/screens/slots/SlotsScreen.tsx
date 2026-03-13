@@ -25,6 +25,8 @@ import type {
   ICourtPricingRule,
   ISelectedSlot,
 } from '../../types';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { setSelectedArena } from '../../store/slices/arenaSlice';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 
@@ -133,7 +135,8 @@ function getSlotPrice(
 }
 
 export function SlotsScreen() {
-  const [selectedArenaId, setSelectedArenaId] = useState('');
+  const dispatch = useAppDispatch();
+  const selectedArenaId = useAppSelector((state) => state.arena.selectedArenaId);
   const [selectedSportId, setSelectedSportId] = useState('');
   const [date, setDate] = useState(todayStr());
   const [selectedSlots, setSelectedSlots] = useState<ISelectedSlot[]>([]);
@@ -164,7 +167,7 @@ export function SlotsScreen() {
   // Auto-select first arena
   useEffect(() => {
     if (arenas.length > 0 && !selectedArenaId) {
-      setSelectedArenaId(arenas[0].id);
+      dispatch(setSelectedArena(arenas[0].id));
     }
   }, [arenas, selectedArenaId]);
 

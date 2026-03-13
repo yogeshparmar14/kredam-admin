@@ -16,7 +16,18 @@ import { Card } from '../../components/ui/Card';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { COLORS } from '../../constants';
 import type { ISlotBlock } from '../../types';
+import { useAppSelector } from '../../store';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
+
+const BLOCK_REASONS = [
+  { value: 'maintenance', label: 'Maintenance' },
+  { value: 'tournament', label: 'Tournament' },
+  { value: 'private_event', label: 'Private Event' },
+  { value: 'weather', label: 'Weather' },
+  { value: 'admin_block', label: 'Admin Block' },
+  { value: 'coaching', label: 'Coaching' },
+  { value: 'other', label: 'Other' },
+];
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -54,20 +65,22 @@ function SlotBlockCard({
 
 const defaultForm = () => ({
   date: todayStr(), startTime: '06:00', endTime: '07:00',
-  reason: '', mode: 'court' as 'court' | 'sport',
+  reason: 'admin_block', mode: 'court' as 'court' | 'sport',
   arenaId: '', courtId: '', sportId: '',
 });
 
 export function SlotBlocksScreen() {
+  const selectedArenaId = useAppSelector((state) => state.arena.selectedArenaId);
   const [date, setDate] = useState(todayStr());
   const [showCreate, setShowCreate] = useState(false);
   const [filterReleased, setFilterReleased] = useState<boolean | undefined>(undefined);
   const [form, setForm] = useState(defaultForm());
 
   const { data, isLoading, refetch } = useGetSlotBlocksQuery({
+    arenaId: selectedArenaId,
     date,
     ...(filterReleased !== undefined && { isReleased: filterReleased }),
-  });
+  }, { skip: !selectedArenaId });
   const { data: arenaData } = useGetArenasQuery({ limit: 50 });
   const { data: courtData } = useGetCourtsByArenaQuery(form.arenaId, { skip: !form.arenaId });
   const { data: sportData } = useGetSportsByArenaQuery(form.arenaId, { skip: !form.arenaId });
@@ -175,7 +188,7 @@ export function SlotBlocksScreen() {
         }
       />
 
-      <TouchableOpacity style={styles.fab} onPress={() => setShowCreate(true)}>
+      <TouchableOpacity style={styles.fab} onPress={() => { setForm({ ...defaultForm(), arenaId: selectedArenaId }); setShowCreate(true); }}>
         <Text style={styles.fabText}>+ Block</Text>
       </TouchableOpacity>
 
@@ -293,15 +306,19 @@ export function SlotBlocksScreen() {
             )}
 
             <Text style={styles.fieldLabel}>Reason *</Text>
-            <TextInput
-              style={[styles.input, styles.textarea]}
-              value={form.reason}
-              onChangeText={(v) => setForm((f) => ({ ...f, reason: v }))}
-              placeholder="e.g. Maintenance, Tournament..."
-              placeholderTextColor={COLORS.gray400}
-              multiline
-              numberOfLines={3}
-            />
+            <View style={styles.reasonGrid}>
+              {BLOCK_REASONS.map((r) => (
+                <TouchableOpacity
+                  key={r.value}
+                  style={[styles.pickerChip, form.reason === r.value && styles.pickerChipActive]}
+                  onPress={() => setForm((f) => ({ ...f, reason: r.value }))}
+                >
+                  <Text style={[styles.pickerChipText, form.reason === r.value && styles.pickerChipTextActive]}>
+                    {r.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
 
             <TouchableOpacity
               style={[styles.submitBtn, creating && styles.submitBtnDisabled]}
@@ -387,6 +404,7 @@ const styles = StyleSheet.create({
   pickerChipText: { fontSize: fs(13), color: COLORS.gray700 },
   pickerChipTextActive: { color: COLORS.white },
   pickerEmpty: { fontSize: fs(13), color: COLORS.gray400, paddingVertical: hp(8) },
+  reasonGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: wp(8) },
   modeRow: { flexDirection: 'row', gap: wp(10) },
   modeBtn: {
     flex: 1, paddingVertical: hp(10), borderRadius: wp(10), alignItems: 'center',

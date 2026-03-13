@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, Modal, TextInput, ScrollView, Alert,
@@ -10,6 +10,8 @@ import { Card } from '../../components/ui/Card';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { COLORS } from '../../constants';
 import type { ISport, IArena } from '../../types';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { setSelectedArena } from '../../store/slices/arenaSlice';
 import { wp, hp, fs, ms, isTablet } from '../../utils/responsive';
 
 function SportCard({ sport, onEdit }: { sport: ISport; onEdit: (s: ISport) => void }) {
@@ -29,7 +31,8 @@ function SportCard({ sport, onEdit }: { sport: ISport; onEdit: (s: ISport) => vo
 }
 
 export function SportsScreen() {
-  const [selectedArenaId, setSelectedArenaId] = useState('');
+  const dispatch = useAppDispatch();
+  const selectedArenaId = useAppSelector((state) => state.arena.selectedArenaId);
   const [showForm, setShowForm] = useState(false);
   const [editSport, setEditSport] = useState<ISport | null>(null);
   const [name, setName] = useState('');
@@ -45,6 +48,13 @@ export function SportsScreen() {
   const [updateSport, { isLoading: updating }] = useUpdateSportMutation();
 
   const arenas: IArena[] = arenaData?.data ?? [];
+
+  // Auto-select first arena
+  useEffect(() => {
+    if (arenas.length > 0 && !selectedArenaId) {
+      dispatch(setSelectedArena(arenas[0].id));
+    }
+  }, [arenas, selectedArenaId]);
   const sports = data ?? [];
 
   const openCreate = () => {
@@ -95,33 +105,7 @@ export function SportsScreen() {
   return (
     <View style={styles.container}>
       <ScreenHeader title="Sports" />
-      {/* Arena selector */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.arenaSelector}
-        contentContainerStyle={styles.arenaSelectorContent}
-      >
-        {arenas.map((a) => (
-          <TouchableOpacity
-            key={a.id}
-            style={[styles.arenaChip, selectedArenaId === a.id && styles.arenaChipActive]}
-            onPress={() => setSelectedArenaId(a.id)}
-          >
-            <Text style={[styles.arenaChipText, selectedArenaId === a.id && styles.arenaChipTextActive]}>
-              {a.name}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {!selectedArenaId ? (
-        <View style={styles.empty}>
-          <Text style={styles.emptyIcon}>🏟</Text>
-          <Text style={styles.emptyText}>Select an arena to view sports</Text>
-        </View>
-      ) : (
-        <FlatList
+      <FlatList
           data={sports}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <SportCard sport={item} onEdit={openEdit} />}
@@ -136,7 +120,6 @@ export function SportsScreen() {
             ) : null
           }
         />
-      )}
 
       {selectedArenaId && (
         <TouchableOpacity style={styles.fab} onPress={openCreate}>

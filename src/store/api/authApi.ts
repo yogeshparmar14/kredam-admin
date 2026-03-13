@@ -38,9 +38,8 @@ export const authApi = baseApi.injectEndpoints({
     register: builder.mutation<void, RegisterRequest>({
       query: (body) => ({ url: '/auth/register', method: 'POST', body }),
     }),
-    forgotPassword: builder.mutation<{ resetToken: string }, ForgotPasswordRequest>({
+    forgotPassword: builder.mutation<{ message: string }, ForgotPasswordRequest>({
       query: (body) => ({ url: '/auth/forgot-password', method: 'POST', body }),
-      transformResponse: (response: { data: { resetToken: string } }) => response.data,
     }),
     resetPassword: builder.mutation<void, ResetPasswordRequest>({
       query: (body) => ({ url: '/auth/reset-password', method: 'POST', body }),

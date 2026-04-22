@@ -143,7 +143,7 @@ export function SlotsScreen() {
   const [bookModalVisible, setBookModalVisible] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
-  const [paymentMode, setPaymentMode] = useState<'cash' | 'online'>('cash');
+  const [paymentMode, setPaymentMode] = useState<'cash' | 'card' | 'upi' | 'other'>('cash');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showSportDropdown, setShowSportDropdown] = useState(false);
 
@@ -553,7 +553,7 @@ export function SlotsScreen() {
 
             {/* Payment mode */}
             <View style={styles.paymentRow}>
-              {(['cash', 'online'] as const).map((mode) => (
+              {(['cash', 'card', 'upi', 'other'] as const).map((mode) => (
                 <TouchableOpacity
                   key={mode}
                   style={[styles.paymentChip, paymentMode === mode && styles.paymentChipActive]}
